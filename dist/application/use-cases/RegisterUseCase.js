@@ -2,9 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RegisterUseCase = void 0;
 class RegisterUseCase {
-    constructor(userRepository, bcryptService, jwtService) {
+    constructor(userRepository, hashService, jwtService) {
         this.userRepository = userRepository;
-        this.bcryptService = bcryptService;
+        this.hashService = hashService;
         this.jwtService = jwtService;
     }
     async execute(data) {
@@ -12,7 +12,7 @@ class RegisterUseCase {
         if (existingUser) {
             throw new Error('Email already in use');
         }
-        const hashedPassword = await this.bcryptService.hash(data.password);
+        const hashedPassword = await this.hashService.hash(data.password);
         const userToCreate = {
             ...data,
             password: hashedPassword,

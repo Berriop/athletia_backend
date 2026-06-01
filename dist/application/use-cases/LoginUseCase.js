@@ -2,9 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LoginUseCase = void 0;
 class LoginUseCase {
-    constructor(userRepository, bcryptService, jwtService) {
+    constructor(userRepository, hashService, jwtService) {
         this.userRepository = userRepository;
-        this.bcryptService = bcryptService;
+        this.hashService = hashService;
         this.jwtService = jwtService;
     }
     async execute(data) {
@@ -15,7 +15,7 @@ class LoginUseCase {
         if (!user.password) {
             throw new Error('Invalid credentials');
         }
-        const isMatch = await this.bcryptService.compare(data.password, user.password);
+        const isMatch = await this.hashService.compare(data.password, user.password);
         if (!isMatch) {
             throw new Error('Invalid credentials');
         }

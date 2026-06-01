@@ -1,12 +1,12 @@
 import { IUserRepository } from '../../domain/repositories/IUserRepository';
-import { BcryptService } from '../../infrastructure/security/BcryptService';
-import { JwtService } from '../../infrastructure/security/JwtService';
+import { IHashService } from '../../domain/services/IHashService';
+import { IJwtService } from '../../domain/services/IJwtService';
 import { RegisterDTO } from '../dto/auth.dto';
 export declare class RegisterUseCase {
     private userRepository;
-    private bcryptService;
+    private hashService;
     private jwtService;
-    constructor(userRepository: IUserRepository, bcryptService: BcryptService, jwtService: JwtService);
+    constructor(userRepository: IUserRepository, hashService: IHashService, jwtService: IJwtService);
     execute(data: RegisterDTO): Promise<{
         user: {
             id: string;
