@@ -1,0 +1,91 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model User {
+  id              String     @id @default(uuid())
+  email           String     @unique
+  password        String
+  name            String?
+  birthDate       DateTime?
+  gender          String?
+  heightCm        Float?
+  weightKg        Float?
+  experienceLevel String?
+  role            Role       @default(USER)
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  workouts        Workout[]
+  meals           Meal[]
+  sleepLogs       SleepLog[]
+  injuries        Injury[]
+}
+
+model Workout {
+  id              String   @id @default(uuid())
+  title           String
+  description     String?
+  bodyPart        String
+  durationMinutes Int
+  energyLevel     Int
+  fatigueLevel    Int
+  painLevel       Int
+  date            DateTime
+  userId          String
+  user            User     @relation(fields: [userId], references: [id])
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Meal {
+  id        String   @id @default(uuid())
+  name      String
+  calories  Int
+  mealType  String
+  proteinG  Float
+  carbsG    Float
+  fatG      Float
+  date      DateTime
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SleepLog {
+  id            String   @id @default(uuid())
+  hoursSlept    Float
+  sleepQuality  Int
+  hadNightmares Boolean  @default(false)
+  stressLevel   Int
+  notes         String?
+  date          DateTime
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Injury {
+  id         String   @id @default(uuid())
+  bodyArea   String
+  injuryName String
+  severity   Int
+  isActive   Boolean  @default(true)
+  notes      String?
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
