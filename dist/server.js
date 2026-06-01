@@ -7,6 +7,7 @@ const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const env_1 = require("./config/env");
 const auth_routes_1 = require("./interface/routes/auth.routes");
+const workout_routes_1 = require("./interface/routes/workout.routes");
 const error_middleware_1 = require("./interface/middlewares/error.middleware");
 const app = (0, express_1.default)();
 // Middlewares globales
@@ -19,6 +20,7 @@ app.get('/health', (req, res) => {
 // Rutas API v1
 const apiRouter = express_1.default.Router();
 apiRouter.use('/auth', auth_routes_1.authRouter);
+apiRouter.use('/workouts', workout_routes_1.workoutRouter);
 app.use('/api/v1', apiRouter);
 // Manejo global de errores
 app.use(error_middleware_1.errorHandler);

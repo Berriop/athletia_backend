@@ -9,9 +9,14 @@ const validate = (schema) => {
                 query: req.query,
                 params: req.params,
             });
-            req.body = validatedData.body;
-            req.query = validatedData.query;
-            req.params = validatedData.params;
+            if (validatedData.body !== undefined)
+                req.body = validatedData.body;
+            if (validatedData.query !== undefined) {
+                Object.assign(req.query, validatedData.query);
+            }
+            if (validatedData.params !== undefined) {
+                Object.assign(req.params, validatedData.params);
+            }
             next();
         }
         catch (error) {

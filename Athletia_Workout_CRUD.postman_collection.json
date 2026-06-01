@@ -1,0 +1,266 @@
+{
+  "info": {
+    "name": "Athletia - Workout CRUD",
+    "description": "API collection para testing del CRUD de Workout",
+    "version": "1.0.0"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"athlete@example.com\",\n  \"password\": \"password123\",\n  \"name\": \"Test Athlete\",\n  \"birthDate\": \"1990-01-15\",\n  \"gender\": \"M\",\n  \"heightCm\": 180,\n  \"weightKg\": 80,\n  \"experienceLevel\": \"intermediate\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/v1/auth/register",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "register"
+              ]
+            },
+            "description": "Registrar un nuevo usuario"
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"athlete@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/v1/auth/login",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Login y obtener token JWT"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Workouts",
+      "item": [
+        {
+          "name": "Create Workout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Sesión de Pecho y Tríceps\",\n  \"description\": \"Workout intenso de press y dips\",\n  \"bodyPart\": \"Chest\",\n  \"durationMinutes\": 45,\n  \"energyLevel\": 8,\n  \"fatigueLevel\": 7,\n  \"painLevel\": 2,\n  \"date\": \"2026-05-31T10:00:00Z\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/v1/workouts",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "v1",
+                "workouts"
+              ]
+            },
+            "description": "Crear un nuevo workout"
+          }
+        },
+        {
+          "name": "Get All Workouts",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3000/api/v1/workouts?page=1&limit=10&bodyPart=Chest&date=2026-05-31",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "v1",
+                "workouts"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": false
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "disabled": false
+                },
+                {
+                  "key": "bodyPart",
+                  "value": "Chest",
+                  "disabled": false
+                },
+                {
+                  "key": "date",
+                  "value": "2026-05-31",
+                  "disabled": false
+                }
+              ]
+            },
+            "description": "Obtener todos los workouts con paginación y filtros"
+          }
+        },
+        {
+          "name": "Get Workout by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3000/api/v1/workouts/{{workoutId}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "v1",
+                "workouts",
+                "{{workoutId}}"
+              ]
+            },
+            "description": "Obtener un workout específico por su ID"
+          }
+        },
+        {
+          "name": "Update Workout",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Sesión de Pecho y Tríceps - ACTUALIZADO\",\n  \"description\": \"Workout actualizado con más intensidad\",\n  \"durationMinutes\": 60,\n  \"energyLevel\": 9,\n  \"fatigueLevel\": 8,\n  \"painLevel\": 1\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/v1/workouts/{{workoutId}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "v1",
+                "workouts",
+                "{{workoutId}}"
+              ]
+            },
+            "description": "Actualizar un workout existente"
+          }
+        },
+        {
+          "name": "Delete Workout",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3000/api/v1/workouts/{{workoutId}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "v1",
+                "workouts",
+                "{{workoutId}}"
+              ]
+            },
+            "description": "Eliminar un workout"
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "token",
+      "value": "",
+      "type": "string",
+      "description": "JWT token del usuario autenticado"
+    },
+    {
+      "key": "workoutId",
+      "value": "",
+      "type": "string",
+      "description": "ID del workout a actualizar/eliminar"
+    }
+  ]
+}

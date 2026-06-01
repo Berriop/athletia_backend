@@ -2,6 +2,7 @@ import express, { Application } from 'express';
 import cors from 'cors';
 import { env } from './config/env';
 import { authRouter } from './interface/routes/auth.routes';
+import { workoutRouter } from './interface/routes/workout.routes';
 import { errorHandler } from './interface/middlewares/error.middleware';
 
 const app: Application = express();
@@ -18,6 +19,7 @@ app.get('/health', (req, res) => {
 // Rutas API v1
 const apiRouter = express.Router();
 apiRouter.use('/auth', authRouter);
+apiRouter.use('/workouts', workoutRouter);
 
 app.use('/api/v1', apiRouter);
 

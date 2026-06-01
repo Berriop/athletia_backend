@@ -1,0 +1,30 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.workoutRouter = void 0;
+const express_1 = require("express");
+const auth_middleware_1 = require("../middlewares/auth.middleware");
+const validation_middleware_1 = require("../middlewares/validation.middleware");
+const WorkoutController_1 = require("../controllers/WorkoutController");
+const CreateWorkoutUseCase_1 = require("../../application/use-cases/workout/CreateWorkoutUseCase");
+const GetWorkoutsUseCase_1 = require("../../application/use-cases/workout/GetWorkoutsUseCase");
+const GetWorkoutByIdUseCase_1 = require("../../application/use-cases/workout/GetWorkoutByIdUseCase");
+const UpdateWorkoutUseCase_1 = require("../../application/use-cases/workout/UpdateWorkoutUseCase");
+const DeleteWorkoutUseCase_1 = require("../../application/use-cases/workout/DeleteWorkoutUseCase");
+const PrismaWorkoutRepository_1 = require("../../infrastructure/repositories/PrismaWorkoutRepository");
+const workout_dto_1 = require("../../application/dto/workout.dto");
+const router = (0, express_1.Router)();
+// Dependency Injection
+const repository = new PrismaWorkoutRepository_1.PrismaWorkoutRepository();
+const createUseCase = new CreateWorkoutUseCase_1.CreateWorkoutUseCase(repository);
+const getAllUseCase = new GetWorkoutsUseCase_1.GetWorkoutsUseCase(repository);
+const getByIdUseCase = new GetWorkoutByIdUseCase_1.GetWorkoutByIdUseCase(repository);
+const updateUseCase = new UpdateWorkoutUseCase_1.UpdateWorkoutUseCase(repository);
+const deleteUseCase = new DeleteWorkoutUseCase_1.DeleteWorkoutUseCase(repository);
+const controller = new WorkoutController_1.WorkoutController(createUseCase, getAllUseCase, getByIdUseCase, updateUseCase, deleteUseCase);
+// Routes
+router.post('/', auth_middleware_1.authMiddleware, (0, validation_middleware_1.validate)(workout_dto_1.CreateWorkoutSchema), (req, res) => controller.create(req, res));
+router.get('/', auth_middleware_1.authMiddleware, (0, validation_middleware_1.validate)(workout_dto_1.QueryWorkoutSchema), (req, res) => controller.getAll(req, res));
+router.get('/:id', auth_middleware_1.authMiddleware, (req, res) => controller.getById(req, res));
+router.put('/:id', auth_middleware_1.authMiddleware, (0, validation_middleware_1.validate)(workout_dto_1.UpdateWorkoutSchema), (req, res) => controller.update(req, res));
+router.delete('/:id', auth_middleware_1.authMiddleware, (req, res) => controller.delete(req, res));
+exports.workoutRouter = router;
