@@ -4,6 +4,7 @@ import { env } from './config/env';
 import { authRouter } from './interface/routes/auth.routes';
 import { workoutRouter } from './interface/routes/workout.routes';
 import { mealRouter } from './interface/routes/meal.routes';
+import { sleepRouter } from './interface/routes/sleep.routes';
 import { errorHandler } from './interface/middlewares/error.middleware';
 
 const app: Application = express();
@@ -22,6 +23,7 @@ const apiRouter = express.Router();
 apiRouter.use('/auth', authRouter);
 apiRouter.use('/workouts', workoutRouter);
 apiRouter.use('/meals', mealRouter);
+apiRouter.use('/sleeps', sleepRouter);
 
 app.use('/api/v1', apiRouter);
 

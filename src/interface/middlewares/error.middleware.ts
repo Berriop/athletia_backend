@@ -14,7 +14,7 @@ export const errorHandler = (err: any, req: Request, res: Response, next: NextFu
     return res.status(401).json({ success: false, message });
   }
 
-  if (err.message === 'Workout not found' || err.message === 'Meal not found') {
+  if (err.message === 'Workout not found' || err.message === 'Meal not found' || err.message === 'Sleep not found') {
     return res.status(404).json({ success: false, message });
   }
 
@@ -22,7 +22,9 @@ export const errorHandler = (err: any, req: Request, res: Response, next: NextFu
     err.message === 'Failed to update workout' ||
     err.message === 'Failed to delete workout' ||
     err.message === 'Failed to update meal' ||
-    err.message === 'Failed to delete meal'
+    err.message === 'Failed to delete meal' ||
+    err.message === 'Failed to update sleep' ||
+    err.message === 'Failed to delete sleep'
   ) {
     return res.status(500).json({ success: false, message });
   }

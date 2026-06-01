@@ -9,6 +9,7 @@ const env_1 = require("./config/env");
 const auth_routes_1 = require("./interface/routes/auth.routes");
 const workout_routes_1 = require("./interface/routes/workout.routes");
 const meal_routes_1 = require("./interface/routes/meal.routes");
+const sleep_routes_1 = require("./interface/routes/sleep.routes");
 const error_middleware_1 = require("./interface/middlewares/error.middleware");
 const app = (0, express_1.default)();
 // Middlewares globales
@@ -23,6 +24,7 @@ const apiRouter = express_1.default.Router();
 apiRouter.use('/auth', auth_routes_1.authRouter);
 apiRouter.use('/workouts', workout_routes_1.workoutRouter);
 apiRouter.use('/meals', meal_routes_1.mealRouter);
+apiRouter.use('/sleeps', sleep_routes_1.sleepRouter);
 app.use('/api/v1', apiRouter);
 // Manejo global de errores
 app.use(error_middleware_1.errorHandler);
