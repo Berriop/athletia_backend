@@ -1,6 +1,8 @@
 import express, { Application } from 'express';
 import cors from 'cors';
 import { env } from './config/env';
+import { authRouter } from './interface/routes/auth.routes';
+import { errorHandler } from './interface/middlewares/error.middleware';
 
 const app: Application = express();
 
@@ -13,7 +15,14 @@ app.get('/health', (req, res) => {
   res.status(200).json({ status: 'OK', message: 'Athletia API is running' });
 });
 
-// Aquí se integrarán las rutas de Interface > Routes en el futuro
+// Rutas API v1
+const apiRouter = express.Router();
+apiRouter.use('/auth', authRouter);
+
+app.use('/api/v1', apiRouter);
+
+// Manejo global de errores
+app.use(errorHandler);
 
 // Inicialización del servidor
 app.listen(env.PORT, () => {
