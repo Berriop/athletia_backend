@@ -1,13 +1,13 @@
 import { IUserRepository } from '../../domain/repositories/IUserRepository';
-import { BcryptService } from '../../infrastructure/security/BcryptService';
-import { JwtService } from '../../infrastructure/security/JwtService';
+import { IHashService } from '../../domain/services/IHashService';
+import { IJwtService } from '../../domain/services/IJwtService';
 import { LoginDTO } from '../dto/auth.dto';
 
 export class LoginUseCase {
   constructor(
     private userRepository: IUserRepository,
-    private bcryptService: BcryptService,
-    private jwtService: JwtService
+    private hashService: IHashService,
+    private jwtService: IJwtService
   ) {}
 
   async execute(data: LoginDTO) {
@@ -20,7 +20,7 @@ export class LoginUseCase {
        throw new Error('Invalid credentials');
     }
 
-    const isMatch = await this.bcryptService.compare(data.password, user.password);
+    const isMatch = await this.hashService.compare(data.password, user.password);
     if (!isMatch) {
       throw new Error('Invalid credentials');
     }
@@ -36,3 +36,4 @@ export class LoginUseCase {
     return { user: userWithoutPassword, token };
   }
 }
+

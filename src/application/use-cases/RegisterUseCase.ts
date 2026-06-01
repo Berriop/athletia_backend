@@ -1,13 +1,13 @@
 import { IUserRepository } from '../../domain/repositories/IUserRepository';
-import { BcryptService } from '../../infrastructure/security/BcryptService';
-import { JwtService } from '../../infrastructure/security/JwtService';
+import { IHashService } from '../../domain/services/IHashService';
+import { IJwtService } from '../../domain/services/IJwtService';
 import { RegisterDTO } from '../dto/auth.dto';
 
 export class RegisterUseCase {
   constructor(
     private userRepository: IUserRepository,
-    private bcryptService: BcryptService,
-    private jwtService: JwtService
+    private hashService: IHashService,
+    private jwtService: IJwtService
   ) {}
 
   async execute(data: RegisterDTO) {
@@ -16,7 +16,7 @@ export class RegisterUseCase {
       throw new Error('Email already in use');
     }
 
-    const hashedPassword = await this.bcryptService.hash(data.password);
+    const hashedPassword = await this.hashService.hash(data.password);
 
     const userToCreate = {
       ...data,
@@ -43,3 +43,4 @@ export class RegisterUseCase {
     return { user: userWithoutPassword, token };
   }
 }
+

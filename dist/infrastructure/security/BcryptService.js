@@ -9,11 +9,11 @@ class BcryptService {
     constructor() {
         this.saltRounds = 10;
     }
-    async hash(password) {
-        return bcrypt_1.default.hash(password, this.saltRounds);
+    async hash(plain) {
+        return bcrypt_1.default.hash(plain, this.saltRounds);
     }
-    async compare(password, hash) {
-        return bcrypt_1.default.compare(password, hash);
+    async compare(plain, hashed) {
+        return bcrypt_1.default.compare(plain, hashed);
     }
 }
 exports.BcryptService = BcryptService;

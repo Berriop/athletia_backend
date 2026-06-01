@@ -1,5 +1,6 @@
-export declare class BcryptService {
+import { IHashService } from '../../domain/services/IHashService';
+export declare class BcryptService implements IHashService {
     private readonly saltRounds;
-    hash(password: string): Promise<string>;
-    compare(password: string, hash: string): Promise<boolean>;
+    hash(plain: string): Promise<string>;
+    compare(plain: string, hashed: string): Promise<boolean>;
 }

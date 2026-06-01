@@ -11,10 +11,13 @@ const errorHandler = (err, req, res, next) => {
     if (err.message === 'Invalid credentials' || err.message === 'User not found') {
         return res.status(401).json({ success: false, message });
     }
-    if (err.message === 'Workout not found') {
+    if (err.message === 'Workout not found' || err.message === 'Meal not found') {
         return res.status(404).json({ success: false, message });
     }
-    if (err.message === 'Failed to update workout' || err.message === 'Failed to delete workout') {
+    if (err.message === 'Failed to update workout' ||
+        err.message === 'Failed to delete workout' ||
+        err.message === 'Failed to update meal' ||
+        err.message === 'Failed to delete meal') {
         return res.status(500).json({ success: false, message });
     }
     res.status(statusCode).json({
