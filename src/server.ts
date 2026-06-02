@@ -16,11 +16,8 @@ app.use(express.json());
 app.use(cors());
 
 // Healthcheck endpoint
-app.get("/", (_req, res) => {
-  res.json({
-    success: true,
-    message: "Athletia API is running"
-  });
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'OK', message: 'Athletia API is running' });
 });
 
 // Rutas API v1
