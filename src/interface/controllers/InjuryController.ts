@@ -27,7 +27,7 @@ export class InjuryController {
   async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!.id;
-      const result = await this.getAllUseCase.execute(userId, req.query as any);
+      const result = await this.getAllUseCase.execute(userId, res.locals.query ?? req.query);
       res.json({ success: true, ...result });
     } catch (error) {
       next(error);

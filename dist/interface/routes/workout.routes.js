@@ -22,9 +22,9 @@ const updateUseCase = new UpdateWorkoutUseCase_1.UpdateWorkoutUseCase(repository
 const deleteUseCase = new DeleteWorkoutUseCase_1.DeleteWorkoutUseCase(repository);
 const controller = new WorkoutController_1.WorkoutController(createUseCase, getAllUseCase, getByIdUseCase, updateUseCase, deleteUseCase);
 // Routes
-router.post('/', auth_middleware_1.authMiddleware, (0, validation_middleware_1.validate)(workout_dto_1.CreateWorkoutSchema), (req, res) => controller.create(req, res));
-router.get('/', auth_middleware_1.authMiddleware, (0, validation_middleware_1.validate)(workout_dto_1.QueryWorkoutSchema), (req, res) => controller.getAll(req, res));
-router.get('/:id', auth_middleware_1.authMiddleware, (req, res) => controller.getById(req, res));
-router.put('/:id', auth_middleware_1.authMiddleware, (0, validation_middleware_1.validate)(workout_dto_1.UpdateWorkoutSchema), (req, res) => controller.update(req, res));
-router.delete('/:id', auth_middleware_1.authMiddleware, (req, res) => controller.delete(req, res));
+router.post('/', auth_middleware_1.authMiddleware, (0, validation_middleware_1.validate)(workout_dto_1.CreateWorkoutSchema), (req, res, next) => controller.create(req, res, next));
+router.get('/', auth_middleware_1.authMiddleware, (0, validation_middleware_1.validate)(workout_dto_1.QueryWorkoutSchema), (req, res, next) => controller.getAll(req, res, next));
+router.get('/:id', auth_middleware_1.authMiddleware, (req, res, next) => controller.getById(req, res, next));
+router.put('/:id', auth_middleware_1.authMiddleware, (0, validation_middleware_1.validate)(workout_dto_1.UpdateWorkoutSchema), (req, res, next) => controller.update(req, res, next));
+router.delete('/:id', auth_middleware_1.authMiddleware, (req, res, next) => controller.delete(req, res, next));
 exports.workoutRouter = router;

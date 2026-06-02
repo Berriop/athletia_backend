@@ -8,15 +8,20 @@ export const validate = (schema: any) => {
         query: req.query,
         params: req.params,
       });
-      
+
+      // Replace body directly (writable)
       if (validatedData.body !== undefined) req.body = validatedData.body;
+
+      // Store coerced query params in res.locals (guaranteed writable)
+      // Controllers must read from res.locals.query instead of req.query
       if (validatedData.query !== undefined) {
-        Object.assign(req.query, validatedData.query);
+        res.locals.query = validatedData.query;
       }
+
       if (validatedData.params !== undefined) {
         Object.assign(req.params, validatedData.params);
       }
-      
+
       next();
     } catch (error: any) {
       if (error && error.errors) {

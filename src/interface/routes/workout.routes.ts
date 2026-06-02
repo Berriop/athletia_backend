@@ -22,10 +22,10 @@ const deleteUseCase = new DeleteWorkoutUseCase(repository);
 const controller = new WorkoutController(createUseCase, getAllUseCase, getByIdUseCase, updateUseCase, deleteUseCase);
 
 // Routes
-router.post('/', authMiddleware, validate(CreateWorkoutSchema), (req, res) => controller.create(req, res));
-router.get('/', authMiddleware, validate(QueryWorkoutSchema), (req, res) => controller.getAll(req, res));
-router.get('/:id', authMiddleware, (req, res) => controller.getById(req, res));
-router.put('/:id', authMiddleware, validate(UpdateWorkoutSchema), (req, res) => controller.update(req, res));
-router.delete('/:id', authMiddleware, (req, res) => controller.delete(req, res));
+router.post('/', authMiddleware, validate(CreateWorkoutSchema), (req, res, next) => controller.create(req, res, next));
+router.get('/', authMiddleware, validate(QueryWorkoutSchema), (req, res, next) => controller.getAll(req, res, next));
+router.get('/:id', authMiddleware, (req, res, next) => controller.getById(req, res, next));
+router.put('/:id', authMiddleware, validate(UpdateWorkoutSchema), (req, res, next) => controller.update(req, res, next));
+router.delete('/:id', authMiddleware, (req, res, next) => controller.delete(req, res, next));
 
 export const workoutRouter = router;

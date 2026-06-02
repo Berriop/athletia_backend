@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { CreateWorkoutUseCase } from '../../application/use-cases/workout/CreateWorkoutUseCase';
 import { GetWorkoutsUseCase } from '../../application/use-cases/workout/GetWorkoutsUseCase';
 import { GetWorkoutByIdUseCase } from '../../application/use-cases/workout/GetWorkoutByIdUseCase';
@@ -11,9 +11,9 @@ export declare class WorkoutController {
     private updateUseCase;
     private deleteUseCase;
     constructor(createUseCase: CreateWorkoutUseCase, getAllUseCase: GetWorkoutsUseCase, getByIdUseCase: GetWorkoutByIdUseCase, updateUseCase: UpdateWorkoutUseCase, deleteUseCase: DeleteWorkoutUseCase);
-    create(req: Request, res: Response): Promise<void>;
-    getAll(req: Request, res: Response): Promise<void>;
-    getById(req: Request, res: Response): Promise<void>;
-    update(req: Request, res: Response): Promise<void>;
-    delete(req: Request, res: Response): Promise<void>;
+    create(req: Request, res: Response, next: NextFunction): Promise<void>;
+    getAll(req: Request, res: Response, next: NextFunction): Promise<void>;
+    getById(req: Request, res: Response, next: NextFunction): Promise<void>;
+    update(req: Request, res: Response, next: NextFunction): Promise<void>;
+    delete(req: Request, res: Response, next: NextFunction): Promise<void>;
 }
