@@ -16,8 +16,11 @@ app.use(express.json());
 app.use(cors());
 
 // Healthcheck endpoint
-app.get('/health', (req, res) => {
-  res.status(200).json({ status: 'OK', message: 'Athletia API is running' });
+app.get("/", (_req, res) => {
+  res.json({
+    success: true,
+    message: "Athletia API is running"
+  });
 });
 
 // Rutas API v1
@@ -38,3 +41,4 @@ app.use(errorHandler);
 app.listen(env.PORT, () => {
   console.log(`Server is running on port ${env.PORT}`);
 });
+
