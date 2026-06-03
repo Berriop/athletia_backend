@@ -31,4 +31,13 @@ export class PrismaUserRepository implements IUserRepository {
     });
     return user as User;
   }
+
+  async update(id: string, data: Partial<Omit<User, 'id' | 'email' | 'password' | 'role' | 'createdAt' | 'updatedAt'>>): Promise<User> {
+    const user = await prisma.user.update({
+      where: { id },
+      data,
+    });
+    return user as User;
+  }
 }
+

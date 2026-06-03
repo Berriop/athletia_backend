@@ -2,13 +2,15 @@ import { Request, Response, NextFunction } from 'express';
 import { RegisterUseCase } from '../../application/use-cases/RegisterUseCase';
 import { LoginUseCase } from '../../application/use-cases/LoginUseCase';
 import { GetMeUseCase } from '../../application/use-cases/GetMeUseCase';
+import { UpdateProfileUseCase } from '../../application/use-cases/UpdateProfileUseCase';
 import { RegisterDTO, LoginDTO } from '../../application/dto/auth.dto';
 
 export class AuthController {
   constructor(
     private registerUseCase: RegisterUseCase,
     private loginUseCase: LoginUseCase,
-    private getMeUseCase: GetMeUseCase
+    private getMeUseCase: GetMeUseCase,
+    private updateProfileUseCase: UpdateProfileUseCase
   ) {}
 
   register = async (req: Request, res: Response, next: NextFunction) => {
@@ -43,7 +45,6 @@ export class AuthController {
 
   getMe = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      // req.user is guaranteed to be set by the authMiddleware
       const userId = req.user!.id;
       const result = await this.getMeUseCase.execute(userId);
       
@@ -56,4 +57,20 @@ export class AuthController {
       next(error);
     }
   };
+
+  updateProfile = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userId = req.user!.id;
+      const result = await this.updateProfileUseCase.execute(userId, req.body);
+
+      res.status(200).json({
+        success: true,
+        message: 'Profile updated successfully',
+        data: result.user,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 }
+
