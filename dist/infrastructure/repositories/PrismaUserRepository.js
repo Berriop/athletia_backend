@@ -31,5 +31,12 @@ class PrismaUserRepository {
         });
         return user;
     }
+    async update(id, data) {
+        const user = await prisma_1.prisma.user.update({
+            where: { id },
+            data,
+        });
+        return user;
+    }
 }
 exports.PrismaUserRepository = PrismaUserRepository;

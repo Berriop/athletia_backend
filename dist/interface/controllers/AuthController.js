@@ -2,10 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthController = void 0;
 class AuthController {
-    constructor(registerUseCase, loginUseCase, getMeUseCase) {
+    constructor(registerUseCase, loginUseCase, getMeUseCase, updateProfileUseCase) {
         this.registerUseCase = registerUseCase;
         this.loginUseCase = loginUseCase;
         this.getMeUseCase = getMeUseCase;
+        this.updateProfileUseCase = updateProfileUseCase;
         this.register = async (req, res, next) => {
             try {
                 const data = req.body;
@@ -36,12 +37,25 @@ class AuthController {
         };
         this.getMe = async (req, res, next) => {
             try {
-                // req.user is guaranteed to be set by the authMiddleware
                 const userId = req.user.id;
                 const result = await this.getMeUseCase.execute(userId);
                 res.status(200).json({
                     success: true,
                     message: 'User profile retrieved successfully',
+                    data: result.user,
+                });
+            }
+            catch (error) {
+                next(error);
+            }
+        };
+        this.updateProfile = async (req, res, next) => {
+            try {
+                const userId = req.user.id;
+                const result = await this.updateProfileUseCase.execute(userId, req.body);
+                res.status(200).json({
+                    success: true,
+                    message: 'Profile updated successfully',
                     data: result.user,
                 });
             }

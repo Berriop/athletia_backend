@@ -3,4 +3,5 @@ export declare const env: {
     DATABASE_URL: string;
     JWT_SECRET: string;
     JWT_EXPIRES_IN: string;
+    GOOGLE_MAPS_API_KEY: string;
 };

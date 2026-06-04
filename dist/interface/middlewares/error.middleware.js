@@ -24,6 +24,9 @@ const errorHandler = (err, req, res, next) => {
         err.message === 'Failed to delete injury') {
         return res.status(500).json({ success: false, message });
     }
+    if (err.message?.startsWith('Google Maps API error') || err.message?.startsWith('Google Places API error')) {
+        return res.status(502).json({ success: false, message });
+    }
     res.status(statusCode).json({
         success: false,
         message,

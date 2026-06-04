@@ -6,6 +6,7 @@ import { workoutRouter } from './interface/routes/workout.routes';
 import { mealRouter } from './interface/routes/meal.routes';
 import { sleepRouter } from './interface/routes/sleep.routes';
 import { injuryRouter } from './interface/routes/injury.routes';
+import { gymRouter } from './interface/routes/gym.routes';
 import { adminRouter } from './interface/routes/admin.routes';
 import { errorHandler } from './interface/middlewares/error.middleware';
 
@@ -27,6 +28,7 @@ apiRouter.use('/workouts', workoutRouter);
 apiRouter.use('/meals', mealRouter);
 apiRouter.use('/sleeps', sleepRouter);
 apiRouter.use('/injuries', injuryRouter);
+apiRouter.use('/gyms', gymRouter);
 apiRouter.use('/admin', adminRouter);
 
 app.use('/api/v1', apiRouter);

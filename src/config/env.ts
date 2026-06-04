@@ -6,10 +6,16 @@ if (!jwtSecret) {
   throw new Error('Missing required environment variable: JWT_SECRET');
 }
 
+const googleMapsApiKey = process.env.GOOGLE_MAPS_API_KEY;
+if (!googleMapsApiKey) {
+  throw new Error('Missing required environment variable: GOOGLE_MAPS_API_KEY');
+}
+
 export const env = {
   PORT: process.env.PORT || 3000,
   DATABASE_URL: process.env.DATABASE_URL as string,
   JWT_SECRET: jwtSecret,
   JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || '24h',
+  GOOGLE_MAPS_API_KEY: googleMapsApiKey,
 };
 

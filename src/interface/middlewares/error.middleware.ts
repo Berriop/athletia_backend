@@ -31,6 +31,10 @@ export const errorHandler = (err: any, req: Request, res: Response, next: NextFu
     return res.status(500).json({ success: false, message });
   }
 
+  if (err.message?.startsWith('Google Maps API error') || err.message?.startsWith('Google Places API error')) {
+    return res.status(502).json({ success: false, message });
+  }
+
   res.status(statusCode).json({
     success: false,
     message,
