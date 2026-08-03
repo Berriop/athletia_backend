@@ -1,6 +1,7 @@
 import { env } from '../../config/env';
 import { Gym } from '../../domain/entities/Gym';
 import { IGoogleMapsService, NearbyQuery, SearchQuery } from '../../domain/services/IGoogleMapsService';
+import { ExternalServiceError } from '../../domain/errors/AppError';
 
 interface GooglePlaceResult {
   place_id: string;
@@ -38,25 +39,34 @@ export class GoogleMapsGymService implements IGoogleMapsService {
   }
 
   async searchGyms(params: SearchQuery): Promise<Gym[]> {
-    let query = params.query;
+    let locationParam = '';
     if (params.lat !== undefined && params.lng !== undefined) {
-      query = `${query}&location=${params.lat},${params.lng}`;
+      locationParam = `&location=${params.lat},${params.lng}`;
     }
-    const url = `${this.baseUrl}/textsearch/json?query=gym+${encodeURIComponent(params.query)}&type=gym&key=${env.GOOGLE_MAPS_API_KEY}`;
+    const url = `${this.baseUrl}/textsearch/json?query=gym+${encodeURIComponent(params.query)}${locationParam}&type=gym&key=${env.GOOGLE_MAPS_API_KEY}`;
     const data = await this.fetchPlaces(url);
     return this.mapResults(data.results);
   }
 
   private async fetchPlaces(url: string): Promise<GooglePlacesResponse> {
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`Google Maps API error: ${response.statusText}`);
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new ExternalServiceError(`Google Maps API error: ${response.statusText}`);
+      }
+      const data = (await response.json()) as GooglePlacesResponse;
+      if (data.status !== 'OK' && data.status !== 'ZERO_RESULTS') {
+        throw new ExternalServiceError(
+          `Google Places API error: ${data.status}${data.error_message ? ` - ${data.error_message}` : ''}`,
+        );
+      }
+      return data;
+    } catch (err: unknown) {
+      if (err instanceof ExternalServiceError) throw err;
+      throw new ExternalServiceError(
+        `Failed to reach Google Places API: ${err instanceof Error ? err.message : String(err)}`,
+      );
     }
-    const data = (await response.json()) as GooglePlacesResponse;
-    if (data.status !== 'OK' && data.status !== 'ZERO_RESULTS') {
-      throw new Error(`Google Places API error: ${data.status}${data.error_message ? ` - ${data.error_message}` : ''}`);
-    }
-    return data;
   }
 
   private mapResults(results: GooglePlaceResult[]): Gym[] {

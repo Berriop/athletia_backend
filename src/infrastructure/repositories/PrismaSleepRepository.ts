@@ -4,16 +4,20 @@ import { ISleepRepository, SleepFilters } from '../../domain/repositories/ISleep
 
 export class PrismaSleepRepository implements ISleepRepository {
   async create(data: Omit<SleepLog, 'id' | 'createdAt' | 'updatedAt'>): Promise<SleepLog> {
-    return prisma.sleepLog.create({ data });
+    const created = await prisma.sleepLog.create({ data });
+    return created as unknown as SleepLog;
   }
 
   async findById(id: string, userId: string): Promise<SleepLog | null> {
-    return prisma.sleepLog.findFirst({ where: { id, userId } });
+    const sleep = await prisma.sleepLog.findFirst({ where: { id, userId } });
+    if (!sleep) return null;
+    return sleep as unknown as SleepLog;
   }
 
   async findAll(userId: string, skip: number, take: number, filters?: SleepFilters): Promise<SleepLog[]> {
     const where = this.buildWhereClause(userId, filters);
-    return prisma.sleepLog.findMany({ where, skip, take, orderBy: { date: 'desc' } });
+    const sleeps = await prisma.sleepLog.findMany({ where, skip, take, orderBy: { date: 'desc' } });
+    return sleeps as unknown as SleepLog[];
   }
 
   async update(

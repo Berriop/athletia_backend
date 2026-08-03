@@ -4,6 +4,7 @@ import { GetMealsUseCase } from '../../application/use-cases/meal/GetMealsUseCas
 import { GetMealByIdUseCase } from '../../application/use-cases/meal/GetMealByIdUseCase';
 import { UpdateMealUseCase } from '../../application/use-cases/meal/UpdateMealUseCase';
 import { DeleteMealUseCase } from '../../application/use-cases/meal/DeleteMealUseCase';
+import { sendCreated, sendNoContent, sendSuccess } from '../helpers/response.helper';
 
 export class MealController {
   constructor(
@@ -18,7 +19,7 @@ export class MealController {
     try {
       const userId = req.user!.id;
       const meal = await this.createUseCase.execute(userId, req.body);
-      res.status(201).json({ success: true, data: meal });
+      sendCreated(res, meal);
     } catch (error) {
       next(error);
     }
@@ -28,7 +29,7 @@ export class MealController {
     try {
       const userId = req.user!.id;
       const result = await this.getAllUseCase.execute(userId, res.locals.query ?? req.query);
-      res.json({ success: true, ...result });
+      sendSuccess(res, result.data, result.meta);
     } catch (error) {
       next(error);
     }
@@ -38,7 +39,7 @@ export class MealController {
     try {
       const userId = req.user!.id;
       const meal = await this.getByIdUseCase.execute(String(req.params['id']), userId);
-      res.json({ success: true, data: meal });
+      sendSuccess(res, meal);
     } catch (error) {
       next(error);
     }
@@ -48,7 +49,7 @@ export class MealController {
     try {
       const userId = req.user!.id;
       const meal = await this.updateUseCase.execute(String(req.params['id']), userId, req.body);
-      res.json({ success: true, data: meal });
+      sendSuccess(res, meal);
     } catch (error) {
       next(error);
     }
@@ -58,7 +59,7 @@ export class MealController {
     try {
       const userId = req.user!.id;
       await this.deleteUseCase.execute(String(req.params['id']), userId);
-      res.status(204).send();
+      sendNoContent(res);
     } catch (error) {
       next(error);
     }

@@ -4,25 +4,21 @@ import { LoginUseCase } from '../../application/use-cases/LoginUseCase';
 import { GetMeUseCase } from '../../application/use-cases/GetMeUseCase';
 import { UpdateProfileUseCase } from '../../application/use-cases/UpdateProfileUseCase';
 import { RegisterDTO, LoginDTO } from '../../application/dto/auth.dto';
+import { sendCreated, sendSuccess } from '../helpers/response.helper';
 
 export class AuthController {
   constructor(
     private registerUseCase: RegisterUseCase,
     private loginUseCase: LoginUseCase,
     private getMeUseCase: GetMeUseCase,
-    private updateProfileUseCase: UpdateProfileUseCase
+    private updateProfileUseCase: UpdateProfileUseCase,
   ) {}
 
   register = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const data = req.body as RegisterDTO;
       const result = await this.registerUseCase.execute(data);
-      
-      res.status(201).json({
-        success: true,
-        message: 'User registered successfully',
-        data: result,
-      });
+      sendCreated(res, result);
     } catch (error) {
       next(error);
     }
@@ -32,12 +28,7 @@ export class AuthController {
     try {
       const data = req.body as LoginDTO;
       const result = await this.loginUseCase.execute(data);
-      
-      res.status(200).json({
-        success: true,
-        message: 'Login successful',
-        data: result,
-      });
+      sendSuccess(res, result);
     } catch (error) {
       next(error);
     }
@@ -47,12 +38,7 @@ export class AuthController {
     try {
       const userId = req.user!.id;
       const result = await this.getMeUseCase.execute(userId);
-      
-      res.status(200).json({
-        success: true,
-        message: 'User profile retrieved successfully',
-        data: result.user,
-      });
+      sendSuccess(res, result.user);
     } catch (error) {
       next(error);
     }
@@ -62,15 +48,9 @@ export class AuthController {
     try {
       const userId = req.user!.id;
       const result = await this.updateProfileUseCase.execute(userId, req.body);
-
-      res.status(200).json({
-        success: true,
-        message: 'Profile updated successfully',
-        data: result.user,
-      });
+      sendSuccess(res, result.user);
     } catch (error) {
       next(error);
     }
   };
 }
-

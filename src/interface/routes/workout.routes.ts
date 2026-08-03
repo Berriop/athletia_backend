@@ -1,25 +1,11 @@
 import { Router } from 'express';
 import { authMiddleware } from '../middlewares/auth.middleware';
 import { validate } from '../middlewares/validation.middleware';
-import { WorkoutController } from '../controllers/WorkoutController';
-import { CreateWorkoutUseCase } from '../../application/use-cases/workout/CreateWorkoutUseCase';
-import { GetWorkoutsUseCase } from '../../application/use-cases/workout/GetWorkoutsUseCase';
-import { GetWorkoutByIdUseCase } from '../../application/use-cases/workout/GetWorkoutByIdUseCase';
-import { UpdateWorkoutUseCase } from '../../application/use-cases/workout/UpdateWorkoutUseCase';
-import { DeleteWorkoutUseCase } from '../../application/use-cases/workout/DeleteWorkoutUseCase';
-import { PrismaWorkoutRepository } from '../../infrastructure/repositories/PrismaWorkoutRepository';
+import { container } from '../../infrastructure/container';
 import { CreateWorkoutSchema, UpdateWorkoutSchema, QueryWorkoutSchema } from '../../application/dto/workout.dto';
 
 const router = Router();
-
-// Dependency Injection
-const repository = new PrismaWorkoutRepository();
-const createUseCase = new CreateWorkoutUseCase(repository);
-const getAllUseCase = new GetWorkoutsUseCase(repository);
-const getByIdUseCase = new GetWorkoutByIdUseCase(repository);
-const updateUseCase = new UpdateWorkoutUseCase(repository);
-const deleteUseCase = new DeleteWorkoutUseCase(repository);
-const controller = new WorkoutController(createUseCase, getAllUseCase, getByIdUseCase, updateUseCase, deleteUseCase);
+const { workoutController: controller } = container;
 
 // Routes
 router.post('/', authMiddleware, validate(CreateWorkoutSchema), (req, res, next) => controller.create(req, res, next));

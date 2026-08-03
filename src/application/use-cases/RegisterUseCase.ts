@@ -2,6 +2,7 @@ import { IUserRepository } from '../../domain/repositories/IUserRepository';
 import { IHashService } from '../../domain/services/IHashService';
 import { IJwtService } from '../../domain/services/IJwtService';
 import { RegisterDTO } from '../dto/auth.dto';
+import { ConflictError } from '../../domain/errors/AppError';
 
 export class RegisterUseCase {
   constructor(
@@ -13,7 +14,7 @@ export class RegisterUseCase {
   async execute(data: RegisterDTO) {
     const existingUser = await this.userRepository.findByEmail(data.email);
     if (existingUser) {
-      throw new Error('Email already in use');
+      throw new ConflictError('Email already in use');
     }
 
     const hashedPassword = await this.hashService.hash(data.password);

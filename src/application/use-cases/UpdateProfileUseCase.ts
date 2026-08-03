@@ -1,4 +1,5 @@
 import { IUserRepository } from '../../domain/repositories/IUserRepository';
+import { NotFoundError } from '../../domain/errors/AppError';
 
 export interface UpdateProfileDTO {
   name?: string | null;
@@ -15,19 +16,22 @@ export class UpdateProfileUseCase {
   async execute(userId: string, data: UpdateProfileDTO) {
     const user = await this.userRepository.findById(userId);
     if (!user) {
-      throw new Error('User not found');
+      throw new NotFoundError('User not found');
     }
 
-    // Prisma expects a Date object, not a string
-    const payload: Record<string, unknown> = { ...data };
-    if (data.birthDate) {
-      payload.birthDate = new Date(data.birthDate);
-    } else if (data.birthDate === null || data.birthDate === '') {
+    // Build the update payload, converting birthDate string to Date
+    const { birthDate, ...rest } = data;
+    const payload: Record<string, unknown> = { ...rest };
+
+    if (birthDate) {
+      payload.birthDate = new Date(birthDate);
+    } else if (birthDate === null || birthDate === '') {
       payload.birthDate = null;
     }
 
-    const updated = await this.userRepository.update(userId, payload as any);
+    const updated = await this.userRepository.update(userId, payload as Parameters<IUserRepository['update']>[1]);
     const { password: _, ...userWithoutPassword } = updated;
     return { user: userWithoutPassword };
   }
 }
+

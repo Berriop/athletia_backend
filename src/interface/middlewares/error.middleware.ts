@@ -1,42 +1,61 @@
 import { Request, Response, NextFunction } from 'express';
+import { AppError } from '../../domain/errors/AppError';
+import { ZodError, ZodIssue } from 'zod';
 
-export const errorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
-  console.error(err);
-
-  const statusCode = err.statusCode || 500;
-  const message = err.message || 'Internal Server Error';
-
-  if (err.message === 'Email already in use') {
-    return res.status(400).json({ success: false, message });
-  }
-  
-  if (err.message === 'Invalid credentials' || err.message === 'User not found') {
-    return res.status(401).json({ success: false, message });
-  }
-
-  if (err.message === 'Workout not found' || err.message === 'Meal not found' || err.message === 'Sleep not found' || err.message === 'Injury not found') {
-    return res.status(404).json({ success: false, message });
-  }
-
-  if (
-    err.message === 'Failed to update workout' ||
-    err.message === 'Failed to delete workout' ||
-    err.message === 'Failed to update meal' ||
-    err.message === 'Failed to delete meal' ||
-    err.message === 'Failed to update sleep' ||
-    err.message === 'Failed to delete sleep' ||
-    err.message === 'Failed to update injury' ||
-    err.message === 'Failed to delete injury'
-  ) {
-    return res.status(500).json({ success: false, message });
-  }
-
-  if (err.message?.startsWith('Google Maps API error') || err.message?.startsWith('Google Places API error')) {
-    return res.status(502).json({ success: false, message });
+/**
+ * Global error handler middleware.
+ *
+ * Resolution order:
+ * 1. AppError (and subclasses) → use the error's own statusCode and code.
+ * 2. ZodError → 400 with field-level details.
+ * 3. Everything else → generic 500 (no internal details leaked).
+ */
+export const errorHandler = (
+  err: Error | AppError | ZodError,
+  _req: Request,
+  res: Response,
+  _next: NextFunction,
+) => {
+  // --- 1. Operational errors (our custom hierarchy) -----------------------
+  if (err instanceof AppError) {
+    console.error(`[AppError] ${err.code}: ${err.message}`);
+    res.status(err.statusCode).json({
+      success: false,
+      error: {
+        code: err.code,
+        message: err.message,
+        ...(err.details ? { details: err.details } : {}),
+      },
+    });
+    return;
   }
 
-  res.status(statusCode).json({
+  // --- 2. Zod validation errors -------------------------------------------
+  if (err instanceof ZodError || (err as { name?: string }).name === 'ZodError') {
+    const zodErr = err as ZodError;
+    const issues: ZodIssue[] = zodErr.issues || (zodErr as unknown as { errors: ZodIssue[] }).errors || [];
+    console.error('[ValidationError] Zod validation failed');
+    res.status(400).json({
+      success: false,
+      error: {
+        code: 'VALIDATION_ERROR',
+        message: 'Validation failed',
+        details: issues.map((e: ZodIssue) => ({
+          field: e.path.join('.'),
+          message: e.message,
+        })),
+      },
+    });
+    return;
+  }
+
+  // --- 3. Unexpected / programming errors ---------------------------------
+  console.error('[UnexpectedError]', err);
+  res.status(500).json({
     success: false,
-    message,
+    error: {
+      code: 'INTERNAL_SERVER_ERROR',
+      message: 'An unexpected error occurred',
+    },
   });
 };

@@ -1,13 +1,13 @@
 import { z } from 'zod';
 
-const MEAL_TYPES = ['breakfast', 'lunch', 'dinner', 'snack'] as const;
+const MEAL_TYPES = ['BREAKFAST', 'LUNCH', 'DINNER', 'SNACK'] as const;
 
 export const CreateMealSchema = z.object({
   body: z.object({
     name: z.string().min(1, 'Name is required').max(255),
     calories: z.number().int().nonnegative('Calories must be a non-negative integer'),
     mealType: z.enum(MEAL_TYPES, {
-      error: 'mealType must be breakfast, lunch, dinner or snack',
+      message: 'mealType must be BREAKFAST, LUNCH, DINNER or SNACK',
     }),
     proteinG: z.number().nonnegative('Protein must be non-negative'),
     carbsG: z.number().nonnegative('Carbs must be non-negative'),

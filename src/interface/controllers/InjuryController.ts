@@ -4,6 +4,7 @@ import { GetInjuriesUseCase } from '../../application/use-cases/injury/GetInjuri
 import { GetInjuryByIdUseCase } from '../../application/use-cases/injury/GetInjuryByIdUseCase';
 import { UpdateInjuryUseCase } from '../../application/use-cases/injury/UpdateInjuryUseCase';
 import { DeleteInjuryUseCase } from '../../application/use-cases/injury/DeleteInjuryUseCase';
+import { sendCreated, sendNoContent, sendSuccess } from '../helpers/response.helper';
 
 export class InjuryController {
   constructor(
@@ -18,7 +19,7 @@ export class InjuryController {
     try {
       const userId = req.user!.id;
       const injury = await this.createUseCase.execute(userId, req.body);
-      res.status(201).json({ success: true, data: injury });
+      sendCreated(res, injury);
     } catch (error) {
       next(error);
     }
@@ -28,7 +29,7 @@ export class InjuryController {
     try {
       const userId = req.user!.id;
       const result = await this.getAllUseCase.execute(userId, res.locals.query ?? req.query);
-      res.json({ success: true, ...result });
+      sendSuccess(res, result.data, result.meta);
     } catch (error) {
       next(error);
     }
@@ -38,7 +39,7 @@ export class InjuryController {
     try {
       const userId = req.user!.id;
       const injury = await this.getByIdUseCase.execute(String(req.params['id']), userId);
-      res.json({ success: true, data: injury });
+      sendSuccess(res, injury);
     } catch (error) {
       next(error);
     }
@@ -48,7 +49,7 @@ export class InjuryController {
     try {
       const userId = req.user!.id;
       const injury = await this.updateUseCase.execute(String(req.params['id']), userId, req.body);
-      res.json({ success: true, data: injury });
+      sendSuccess(res, injury);
     } catch (error) {
       next(error);
     }
@@ -58,7 +59,7 @@ export class InjuryController {
     try {
       const userId = req.user!.id;
       await this.deleteUseCase.execute(String(req.params['id']), userId);
-      res.status(204).send();
+      sendNoContent(res);
     } catch (error) {
       next(error);
     }

@@ -4,16 +4,20 @@ import { IInjuryRepository, InjuryFilters } from '../../domain/repositories/IInj
 
 export class PrismaInjuryRepository implements IInjuryRepository {
   async create(data: Omit<Injury, 'id' | 'createdAt' | 'updatedAt'>): Promise<Injury> {
-    return prisma.injury.create({ data });
+    const created = await prisma.injury.create({ data });
+    return created as unknown as Injury;
   }
 
   async findById(id: string, userId: string): Promise<Injury | null> {
-    return prisma.injury.findFirst({ where: { id, userId } });
+    const injury = await prisma.injury.findFirst({ where: { id, userId } });
+    if (!injury) return null;
+    return injury as unknown as Injury;
   }
 
   async findAll(userId: string, skip: number, take: number, filters?: InjuryFilters): Promise<Injury[]> {
     const where = this.buildWhereClause(userId, filters);
-    return prisma.injury.findMany({ where, skip, take, orderBy: { createdAt: 'desc' } });
+    const injuries = await prisma.injury.findMany({ where, skip, take, orderBy: { createdAt: 'desc' } });
+    return injuries as unknown as Injury[];
   }
 
   async update(

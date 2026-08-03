@@ -2,6 +2,7 @@ import { IUserRepository } from '../../domain/repositories/IUserRepository';
 import { IHashService } from '../../domain/services/IHashService';
 import { IJwtService } from '../../domain/services/IJwtService';
 import { LoginDTO } from '../dto/auth.dto';
+import { UnauthorizedError } from '../../domain/errors/AppError';
 
 export class LoginUseCase {
   constructor(
@@ -13,16 +14,16 @@ export class LoginUseCase {
   async execute(data: LoginDTO) {
     const user = await this.userRepository.findByEmail(data.email);
     if (!user) {
-      throw new Error('Invalid credentials');
+      throw new UnauthorizedError('Invalid credentials');
     }
 
     if (!user.password) {
-       throw new Error('Invalid credentials');
+       throw new UnauthorizedError('Invalid credentials');
     }
 
     const isMatch = await this.hashService.compare(data.password, user.password);
     if (!isMatch) {
-      throw new Error('Invalid credentials');
+      throw new UnauthorizedError('Invalid credentials');
     }
 
     const token = this.jwtService.generateToken({

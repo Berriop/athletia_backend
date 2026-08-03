@@ -4,16 +4,20 @@ import { IMealRepository, MealFilters } from '../../domain/repositories/IMealRep
 
 export class PrismaMealRepository implements IMealRepository {
   async create(data: Omit<Meal, 'id' | 'createdAt' | 'updatedAt'>): Promise<Meal> {
-    return prisma.meal.create({ data });
+    const created = await prisma.meal.create({ data });
+    return created as unknown as Meal;
   }
 
   async findById(id: string, userId: string): Promise<Meal | null> {
-    return prisma.meal.findFirst({ where: { id, userId } });
+    const meal = await prisma.meal.findFirst({ where: { id, userId } });
+    if (!meal) return null;
+    return meal as unknown as Meal;
   }
 
   async findAll(userId: string, skip: number, take: number, filters?: MealFilters): Promise<Meal[]> {
     const where = this.buildWhereClause(userId, filters);
-    return prisma.meal.findMany({ where, skip, take, orderBy: { date: 'desc' } });
+    const meals = await prisma.meal.findMany({ where, skip, take, orderBy: { date: 'desc' } });
+    return meals as unknown as Meal[];
   }
 
   async update(
@@ -35,7 +39,6 @@ export class PrismaMealRepository implements IMealRepository {
     return prisma.meal.count({ where });
   }
 
-  // Extracted to avoid duplication between findAll and count
   private buildWhereClause(userId: string, filters?: MealFilters): Record<string, unknown> {
     const where: Record<string, unknown> = { userId };
 

@@ -17,5 +17,5 @@ export const env = {
   JWT_SECRET: jwtSecret,
   JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || '24h',
   GOOGLE_MAPS_API_KEY: googleMapsApiKey,
+  CORS_ORIGIN: process.env.CORS_ORIGIN || 'http://localhost:5173',
 };
-
