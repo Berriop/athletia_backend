@@ -10,6 +10,7 @@ import { sleepRouter } from './interface/routes/sleep.routes';
 import { injuryRouter } from './interface/routes/injury.routes';
 import { gymRouter } from './interface/routes/gym.routes';
 import { adminRouter } from './interface/routes/admin.routes';
+import { userRouter } from './interface/routes/user.routes';
 import { errorHandler } from './interface/middlewares/error.middleware';
 import { ForbiddenError } from './domain/errors/AppError';
 
@@ -99,6 +100,7 @@ apiRouter.use('/sleeps', sleepRouter);
 apiRouter.use('/injuries', injuryRouter);
 apiRouter.use('/gyms', gymRouter);
 apiRouter.use('/admin', adminRouter);
+apiRouter.use('/user', userRouter);
 
 app.use('/api/v1', apiRouter);
 

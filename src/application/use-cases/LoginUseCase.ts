@@ -2,7 +2,7 @@ import { IUserRepository } from '../../domain/repositories/IUserRepository';
 import { IHashService } from '../../domain/services/IHashService';
 import { IJwtService } from '../../domain/services/IJwtService';
 import { LoginDTO } from '../dto/auth.dto';
-import { UnauthorizedError } from '../../domain/errors/AppError';
+import { UnauthorizedError, ForbiddenError } from '../../domain/errors/AppError';
 
 export class LoginUseCase {
   constructor(
@@ -15,6 +15,10 @@ export class LoginUseCase {
     const user = await this.userRepository.findByEmail(data.email);
     if (!user) {
       throw new UnauthorizedError('Invalid credentials');
+    }
+
+    if (user.isBlocked) {
+      throw new ForbiddenError('Tu cuenta se encuentra bloqueada. Contacta al administrador.');
     }
 
     if (!user.password) {

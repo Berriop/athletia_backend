@@ -21,29 +21,39 @@ export class PrismaUserRepository implements IUserRepository {
 
   async create(data: Omit<User, 'id' | 'createdAt' | 'updatedAt'>): Promise<User> {
     const user = await prisma.user.create({
-      data: {
-        email: data.email,
-        password: data.password!,
-        name: data.name,
-        birthDate: data.birthDate,
-        gender: data.gender,
-        heightCm: data.heightCm,
-        weightKg: data.weightKg,
-        experienceLevel: data.experienceLevel,
-        role: data.role,
-      },
+      data: data as any,
     });
     return user as unknown as User;
   }
 
-  async update(
-    id: string,
-    data: Partial<Omit<User, 'id' | 'email' | 'password' | 'role' | 'createdAt' | 'updatedAt'>>,
-  ): Promise<User> {
+  async update(id: string, data: Partial<User>): Promise<User> {
     const user = await prisma.user.update({
       where: { id },
-      data,
+      data: data as any,
     });
     return user as unknown as User;
+  }
+
+  async findByResetToken(token: string): Promise<User | null> {
+    const user = await prisma.user.findFirst({
+      where: { resetPasswordToken: token }
+    });
+    if (!user) return null;
+    return user as unknown as User;
+  }
+
+  async findByEmailVerificationToken(token: string): Promise<User | null> {
+    const user = await prisma.user.findFirst({
+      where: { emailVerificationToken: token }
+    });
+    if (!user) return null;
+    return user as unknown as User;
+  }
+
+  async findAll(): Promise<User[]> {
+    const users = await prisma.user.findMany({
+      orderBy: { createdAt: 'desc' },
+    });
+    return users as unknown as User[];
   }
 }

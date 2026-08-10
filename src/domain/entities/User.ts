@@ -13,6 +13,11 @@ export interface User {
   weightKg: number | null;
   experienceLevel: ExperienceLevel | null;
   role: Role;
+  isEmailVerified: boolean;
+  emailVerificationToken: string | null;
+  resetPasswordToken: string | null;
+  resetPasswordExpires: Date | null;
+  isBlocked: boolean;
   createdAt: Date;
   updatedAt: Date;
 }

@@ -15,6 +15,13 @@ import { RegisterUseCase } from '../application/use-cases/RegisterUseCase';
 import { LoginUseCase } from '../application/use-cases/LoginUseCase';
 import { GetMeUseCase } from '../application/use-cases/GetMeUseCase';
 import { UpdateProfileUseCase } from '../application/use-cases/UpdateProfileUseCase';
+import { ForgotPasswordUseCase } from '../application/use-cases/ForgotPasswordUseCase';
+import { ResetPasswordUseCase } from '../application/use-cases/ResetPasswordUseCase';
+import { VerifyEmailUseCase } from '../application/use-cases/VerifyEmailUseCase';
+import { GetAllUsersUseCase } from '../application/use-cases/admin/GetAllUsersUseCase';
+import { ToggleUserBlockUseCase } from '../application/use-cases/admin/ToggleUserBlockUseCase';
+import { ExportUserDataUseCase } from '../application/use-cases/ExportUserDataUseCase';
+import { ConsoleEmailService } from './services/EmailService';
 
 // Workout Use Cases
 import { CreateWorkoutUseCase } from '../application/use-cases/workout/CreateWorkoutUseCase';
@@ -55,6 +62,8 @@ import { MealController } from '../interface/controllers/MealController';
 import { SleepController } from '../interface/controllers/SleepController';
 import { InjuryController } from '../interface/controllers/InjuryController';
 import { GymController } from '../interface/controllers/GymController';
+import { AdminController } from '../interface/controllers/AdminController';
+import { UserController } from '../interface/controllers/UserController';
 
 class Container {
   // Repositories
@@ -68,12 +77,14 @@ class Container {
   public readonly hashService = new BcryptService();
   public readonly jwtService = new JwtService();
   public readonly googleMapsService = new GoogleMapsGymService();
+  public readonly emailService = new ConsoleEmailService();
 
   // Auth Use Cases
   public readonly registerUseCase = new RegisterUseCase(
     this.userRepository,
     this.hashService,
     this.jwtService,
+    this.emailService,
   );
   public readonly loginUseCase = new LoginUseCase(
     this.userRepository,
@@ -82,6 +93,12 @@ class Container {
   );
   public readonly getMeUseCase = new GetMeUseCase(this.userRepository);
   public readonly updateProfileUseCase = new UpdateProfileUseCase(this.userRepository);
+  public readonly forgotPasswordUseCase = new ForgotPasswordUseCase(this.userRepository, this.emailService);
+  public readonly resetPasswordUseCase = new ResetPasswordUseCase(this.userRepository);
+  public readonly verifyEmailUseCase = new VerifyEmailUseCase(this.userRepository);
+  public readonly getAllUsersUseCase = new GetAllUsersUseCase(this.userRepository);
+  public readonly toggleUserBlockUseCase = new ToggleUserBlockUseCase(this.userRepository);
+  public readonly exportUserDataUseCase = new ExportUserDataUseCase(this.userRepository);
 
   // Workout Use Cases
   public readonly createWorkoutUseCase = new CreateWorkoutUseCase(this.workoutRepository);
@@ -121,6 +138,9 @@ class Container {
     this.loginUseCase,
     this.getMeUseCase,
     this.updateProfileUseCase,
+    this.forgotPasswordUseCase,
+    this.resetPasswordUseCase,
+    this.verifyEmailUseCase
   );
 
   public readonly workoutController = new WorkoutController(
@@ -158,6 +178,15 @@ class Container {
   public readonly gymController = new GymController(
     this.nearbyGymsUseCase,
     this.searchGymsUseCase,
+  );
+
+  public readonly adminController = new AdminController(
+    this.getAllUsersUseCase,
+    this.toggleUserBlockUseCase,
+  );
+
+  public readonly userController = new UserController(
+    this.exportUserDataUseCase,
   );
 }
 
