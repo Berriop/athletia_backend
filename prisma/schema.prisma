@@ -8,27 +8,27 @@ datasource db {
 }
 
 model User {
-  id              String           @id @default(uuid())
-  email           String           @unique
-  password        String
-  name            String?
-  birthDate       DateTime?
-  gender          Gender?
-  heightCm        Float?
-  weightKg        Float?
-  experienceLevel ExperienceLevel?
-  role            Role             @default(USER)
-  isEmailVerified        Boolean   @default(false)
+  id                     String           @id @default(uuid())
+  email                  String           @unique
+  password               String
+  name                   String?
+  birthDate              DateTime?
+  gender                 Gender?
+  heightCm               Float?
+  weightKg               Float?
+  experienceLevel        ExperienceLevel?
+  role                   Role             @default(USER)
+  isEmailVerified        Boolean          @default(false)
   emailVerificationToken String?
   resetPasswordToken     String?
   resetPasswordExpires   DateTime?
-  isBlocked              Boolean   @default(false)
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-  injuries        Injury[]
-  meals           Meal[]
-  sleepLogs       SleepLog[]
-  workouts        Workout[]
+  isBlocked              Boolean          @default(false)
+  createdAt              DateTime         @default(now())
+  updatedAt              DateTime         @updatedAt
+  injuries               Injury[]
+  meals                  Meal[]
+  sleepLogs              SleepLog[]
+  workouts               Workout[]
 
   @@index([createdAt])
 }
@@ -46,7 +46,7 @@ model Workout {
   userId          String
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([date])
@@ -65,7 +65,7 @@ model Meal {
   userId    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([date])
@@ -84,7 +84,7 @@ model SleepLog {
   userId        String
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([date])
@@ -101,7 +101,7 @@ model Injury {
   userId     String
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([bodyArea])
