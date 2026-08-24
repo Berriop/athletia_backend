@@ -11,7 +11,7 @@ export class RegisterUseCase {
     private userRepository: IUserRepository,
     private hashService: IHashService,
     private jwtService: IJwtService,
-    private emailService: IEmailService
+    private emailService?: IEmailService,
   ) {}
 
   async execute(data: RegisterDTO) {
@@ -50,7 +50,9 @@ export class RegisterUseCase {
 
     const { password: _, ...userWithoutPassword } = user;
 
-    await this.emailService.sendVerificationEmail(user.email, emailVerificationToken);
+    if (this.emailService) {
+      await this.emailService.sendVerificationEmail(user.email, emailVerificationToken);
+    }
 
     return { user: userWithoutPassword, token };
   }
