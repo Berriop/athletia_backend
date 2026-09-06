@@ -19,15 +19,22 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
 
       - name: Install dependencies
         run: npm ci
 
       - name: Run tests with coverage
         run: npm run test:coverage -- --run
+        env:
+          # Valores de relleno: las pruebas mockean el repositorio/servicio real
+          # (no pegan a una base de datos ni API externa), pero env.ts exige que
+          # estas variables existan para poder importar la app.
+          JWT_SECRET: ci-dummy-jwt-secret-not-used-for-real-auth
+          GOOGLE_MAPS_API_KEY: ci-dummy-google-maps-key
+          DATABASE_URL: postgresql://dummy:dummy@localhost:5432/dummy
 
       - name: SonarCloud Scan
-        uses: SonarSource/sonarqube-scan-action@v5
+        uses: SonarSource/sonarqube-scan-action@v6
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
