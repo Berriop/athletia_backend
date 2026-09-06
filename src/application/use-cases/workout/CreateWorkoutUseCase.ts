@@ -3,7 +3,7 @@ import { Workout } from '../../../domain/entities/Workout';
 import { CreateWorkoutDTO } from '../../dto/workout.dto';
 
 export class CreateWorkoutUseCase {
-  constructor(private workoutRepository: IWorkoutRepository) {}
+  constructor(private readonly workoutRepository: IWorkoutRepository) {}
 
   async execute(userId: string, data: CreateWorkoutDTO): Promise<Workout> {
     const workoutData = {
