@@ -94,7 +94,7 @@ class Container {
   public readonly getMeUseCase = new GetMeUseCase(this.userRepository);
   public readonly updateProfileUseCase = new UpdateProfileUseCase(this.userRepository);
   public readonly forgotPasswordUseCase = new ForgotPasswordUseCase(this.userRepository, this.emailService);
-  public readonly resetPasswordUseCase = new ResetPasswordUseCase(this.userRepository);
+  public readonly resetPasswordUseCase = new ResetPasswordUseCase(this.userRepository, this.hashService);
   public readonly verifyEmailUseCase = new VerifyEmailUseCase(this.userRepository);
   public readonly getAllUsersUseCase = new GetAllUsersUseCase(this.userRepository);
   public readonly toggleUserBlockUseCase = new ToggleUserBlockUseCase(this.userRepository);
