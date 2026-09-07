@@ -7,7 +7,7 @@ export class ConsoleEmailService implements IEmailService {
   async sendPasswordResetEmail(email: string, token: string): Promise<void> {
     console.log(`\n========================================`);
     console.log(`EMAIL SIMULADO (Recuperación de contraseña)`);
-    console.log(`Para: ${email}`);
+    console.log({ para: email });
     console.log(`Asunto: Recupera tu contraseña en Athletia`);
     console.log(`Token: ${token}`);
     console.log(`Link: http://localhost:5173/reset-password?token=${token}`);
@@ -17,7 +17,7 @@ export class ConsoleEmailService implements IEmailService {
   async sendVerificationEmail(email: string, token: string): Promise<void> {
     console.log(`\n========================================`);
     console.log(`EMAIL SIMULADO (Verificación de correo)`);
-    console.log(`Para: ${email}`);
+    console.log({ para: email });
     console.log(`Asunto: Verifica tu cuenta en Athletia`);
     console.log(`Token: ${token}`);
     console.log(`Link: http://localhost:5173/verify-email?token=${token}`);
