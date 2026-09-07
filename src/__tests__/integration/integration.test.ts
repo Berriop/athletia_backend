@@ -15,6 +15,11 @@ describe('API Integration Workflows', () => {
     weightKg: 75,
     experienceLevel: 'INTERMEDIATE' as const,
     role: 'USER' as const,
+    isEmailVerified: true,
+    emailVerificationToken: null,
+    resetPasswordToken: null,
+    resetPasswordExpires: null,
+    isBlocked: false,
     createdAt: new Date(),
     updatedAt: new Date(),
   };
