@@ -1,5 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { RegisterSchema } from '../../application/dto/auth.dto';
+import {
+  RegisterSchema,
+  ForgotPasswordSchema,
+  ResetPasswordSchema,
+} from '../../application/dto/auth.dto';
 
 describe('Auth DTO Validation (Password Policy & Double Verification)', () => {
   const validUser = {
@@ -90,5 +94,62 @@ describe('Auth DTO Validation (Password Policy & Double Verification)', () => {
 
     // Act & Assert
     await expect(RegisterSchema.parseAsync({ body: mismatchedUser })).rejects.toThrow();
+  });
+});
+
+// RF-32 — Recuperar contraseña. Validación de los endpoints forgot-password
+// y reset-password (antes sin esquema Zod: devolvían 500 en lugar de 400).
+describe('ForgotPasswordSchema', () => {
+  it('accepts a valid email', async () => {
+    // Act
+    const result = await ForgotPasswordSchema.parseAsync({ body: { email: 'user@example.com' } });
+
+    // Assert
+    expect(result.body.email).toBe('user@example.com');
+  });
+
+  it('rejects an invalid email format', async () => {
+    // Act & Assert
+    await expect(ForgotPasswordSchema.parseAsync({ body: { email: 'not-an-email' } })).rejects.toThrow();
+  });
+
+  it('rejects a missing email', async () => {
+    // Act & Assert
+    await expect(ForgotPasswordSchema.parseAsync({ body: {} })).rejects.toThrow();
+  });
+});
+
+describe('ResetPasswordSchema', () => {
+  const validReset = {
+    token: 'abc123',
+    newPassword: 'StrongP@ss1234',
+  };
+
+  it('accepts a valid token and strong new password', async () => {
+    // Act
+    const result = await ResetPasswordSchema.parseAsync({ body: validReset });
+
+    // Assert
+    expect(result.body.token).toBe('abc123');
+    expect(result.body.newPassword).toBe('StrongP@ss1234');
+  });
+
+  it('rejects a missing token', async () => {
+    // Act & Assert
+    await expect(ResetPasswordSchema.parseAsync({ body: { newPassword: 'StrongP@ss1234' } })).rejects.toThrow();
+  });
+
+  it('rejects a weak new password (short)', async () => {
+    // Act & Assert
+    await expect(
+      ResetPasswordSchema.parseAsync({ body: { token: 'abc123', newPassword: 'Short1!' } }),
+    ).rejects.toThrow();
+  });
+
+  it('rejects a new password without special characters', async () => {
+    // Act & Assert
+    await expect(
+      ResetPasswordSchema.parseAsync({ body: { token: 'abc123', newPassword: 'StrongPass1234' } }),
+    ).rejects.toThrow();
   });
 });

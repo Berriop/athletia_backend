@@ -36,5 +36,26 @@ export const LoginSchema = z.object({
   }),
 });
 
+export const ForgotPasswordSchema = z.object({
+  body: z.object({
+    email: z.string().email('Invalid email format'),
+  }),
+});
+
+export const ResetPasswordSchema = z.object({
+  body: z.object({
+    token: z.string().min(1, 'Token is required'),
+    newPassword: z
+      .string()
+      .min(12, 'La contraseña debe tener al menos 12 caracteres')
+      .regex(
+        passwordRegex,
+        'La contraseña debe incluir al menos una letra mayúscula, una letra minúscula, un número y un carácter especial',
+      ),
+  }),
+});
+
 export type RegisterDTO = z.infer<typeof RegisterSchema>['body'];
 export type LoginDTO = z.infer<typeof LoginSchema>['body'];
+export type ForgotPasswordDTO = z.infer<typeof ForgotPasswordSchema>['body'];
+export type ResetPasswordDTO = z.infer<typeof ResetPasswordSchema>['body'];

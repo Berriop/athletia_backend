@@ -22,11 +22,10 @@ export class ForgotPasswordUseCase {
     const resetToken = crypto.randomBytes(32).toString('hex');
     const resetPasswordExpires = new Date(Date.now() + 15 * 60 * 1000);
 
-    // This method needs to be implemented in repository
     await this.userRepository.update(user.id, {
       resetPasswordToken: resetToken,
       resetPasswordExpires,
-    } as any);
+    });
 
     await this.emailService.sendPasswordResetEmail(email, resetToken);
   }
