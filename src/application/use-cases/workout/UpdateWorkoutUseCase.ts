@@ -4,7 +4,7 @@ import { UpdateWorkoutDTO } from '../../dto/workout.dto';
 import { NotFoundError } from '../../../domain/errors/AppError';
 
 export class UpdateWorkoutUseCase {
-  constructor(private workoutRepository: IWorkoutRepository) {}
+  constructor(private readonly workoutRepository: IWorkoutRepository) {}
 
   async execute(workoutId: string, userId: string, data: UpdateWorkoutDTO): Promise<Workout> {
     const existing = await this.workoutRepository.findById(workoutId, userId);

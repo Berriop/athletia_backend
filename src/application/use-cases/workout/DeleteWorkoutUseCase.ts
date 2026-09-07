@@ -2,7 +2,7 @@ import { IWorkoutRepository } from '../../../domain/repositories/IWorkoutReposit
 import { NotFoundError } from '../../../domain/errors/AppError';
 
 export class DeleteWorkoutUseCase {
-  constructor(private workoutRepository: IWorkoutRepository) {}
+  constructor(private readonly workoutRepository: IWorkoutRepository) {}
 
   async execute(workoutId: string, userId: string): Promise<void> {
     const existing = await this.workoutRepository.findById(workoutId, userId);
