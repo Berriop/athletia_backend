@@ -11,6 +11,7 @@ describe('GoogleMapsGymService', () => {
   });
 
   it('searchGyms correctly appends location parameter to URL when lat/lng are supplied', async () => {
+    // Arrange
     const mockFetch = vi.fn().mockResolvedValue({
       ok: true,
       json: async () => ({
@@ -30,12 +31,14 @@ describe('GoogleMapsGymService', () => {
     });
     vi.stubGlobal('fetch', mockFetch);
 
+    // Act
     const gyms = await service.searchGyms({
       query: 'crossfit',
       lat: 40.7128,
       lng: -74.006,
     });
 
+    // Assert
     expect(mockFetch).toHaveBeenCalledOnce();
     const url = mockFetch.mock.calls[0][0] as string;
     expect(url).toContain('query=gym+crossfit');
@@ -45,6 +48,7 @@ describe('GoogleMapsGymService', () => {
   });
 
   it('throws ExternalServiceError when Google API returns non-OK status', async () => {
+    // Arrange
     const mockFetch = vi.fn().mockResolvedValue({
       ok: true,
       json: async () => ({
@@ -54,6 +58,7 @@ describe('GoogleMapsGymService', () => {
     });
     vi.stubGlobal('fetch', mockFetch);
 
+    // Act & Assert
     await expect(
       service.findNearbyGyms({ lat: 40.7128, lng: -74.006, radius: 5000 }),
     ).rejects.toThrow(ExternalServiceError);

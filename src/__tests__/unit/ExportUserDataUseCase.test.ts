@@ -40,6 +40,7 @@ describe('ExportUserDataUseCase', () => {
 
   // Camino único: INICIO,1,2,3,FIN
   it('Camino 1: consulta en paralelo los 4 tipos de registro y arma un CSV con una fila por registro', async () => {
+    // Arrange
     vi.mocked(prisma.workout.findMany).mockResolvedValue([
       { title: 'Pierna', bodyPart: 'LEGS', durationMinutes: 45, date: new Date('2026-08-01') } as any,
     ]);
@@ -53,9 +54,11 @@ describe('ExportUserDataUseCase', () => {
       { bodyArea: 'Hombro', injuryName: 'Tendinitis', severity: 4, createdAt: new Date('2026-08-04') } as any,
     ]);
 
+    // Act
     const csv = await useCase.execute('user-1');
     const lines = csv.split('\n');
 
+    // Assert
     expect(prisma.workout.findMany).toHaveBeenCalledWith({ where: { userId: 'user-1' }, orderBy: { date: 'desc' } });
     expect(lines[0]).toBe('TYPE,DATE,DETAIL_1,DETAIL_2,DETAIL_3');
     expect(lines).toHaveLength(5); // encabezado + 1 fila por cada tipo de registro
@@ -66,13 +69,16 @@ describe('ExportUserDataUseCase', () => {
   });
 
   it('sin ningún registro → retorna solo el encabezado del CSV', async () => {
+    // Arrange
     vi.mocked(prisma.workout.findMany).mockResolvedValue([]);
     vi.mocked(prisma.meal.findMany).mockResolvedValue([]);
     vi.mocked(prisma.sleepLog.findMany).mockResolvedValue([]);
     vi.mocked(prisma.injury.findMany).mockResolvedValue([]);
 
+    // Act
     const csv = await useCase.execute('user-1');
 
+    // Assert
     expect(csv).toBe('TYPE,DATE,DETAIL_1,DETAIL_2,DETAIL_3');
   });
 });

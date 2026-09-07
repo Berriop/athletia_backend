@@ -23,6 +23,7 @@ describe('CreateInjuryUseCase', () => {
 
   // Camino único: INICIO,1,2,3,FIN
   it('Camino 1: datos válidos → crea la lesión con estado activo asociada al usuario (201)', async () => {
+    // Arrange
     const created: Injury = {
       id: 'injury-1',
       bodyArea: 'Rodilla derecha',
@@ -36,6 +37,7 @@ describe('CreateInjuryUseCase', () => {
     };
     vi.mocked(injuryRepository.create).mockResolvedValue(created);
 
+    // Act
     const result = await useCase.execute('user-1', {
       bodyArea: 'Rodilla derecha',
       injuryName: 'Esguince',
@@ -43,6 +45,7 @@ describe('CreateInjuryUseCase', () => {
       isActive: true,
     });
 
+    // Assert
     expect(injuryRepository.create).toHaveBeenCalledWith(
       expect.objectContaining({ userId: 'user-1', bodyArea: 'Rodilla derecha', notes: null }),
     );
@@ -50,8 +53,10 @@ describe('CreateInjuryUseCase', () => {
   });
 
   it('cuando no se envían notas, las guarda como null (no undefined)', async () => {
+    // Arrange
     vi.mocked(injuryRepository.create).mockResolvedValue({} as Injury);
 
+    // Act
     await useCase.execute('user-1', {
       bodyArea: 'Hombro',
       injuryName: 'Tendinitis',
@@ -59,6 +64,7 @@ describe('CreateInjuryUseCase', () => {
       isActive: true,
     });
 
+    // Assert
     const callArg = vi.mocked(injuryRepository.create).mock.calls[0][0];
     expect(callArg.notes).toBeNull();
   });

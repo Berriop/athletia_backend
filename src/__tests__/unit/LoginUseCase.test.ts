@@ -61,8 +61,10 @@ describe('LoginUseCase', () => {
 
   // Camino 1: usuario no existe
   it('Camino 1: correo no registrado → lanza UnauthorizedError (401)', async () => {
+    // Arrange
     vi.mocked(userRepository.findByEmail).mockResolvedValue(null);
 
+    // Act & Assert
     await expect(
       useCase.execute({ email: 'unknown@example.com', password: 'StrongP@ss1234' }),
     ).rejects.toThrow(UnauthorizedError);
@@ -70,8 +72,10 @@ describe('LoginUseCase', () => {
 
   // Camino 2: usuario existe pero bloqueado
   it('Camino 2: cuenta bloqueada → lanza ForbiddenError (403)', async () => {
+    // Arrange
     vi.mocked(userRepository.findByEmail).mockResolvedValue(baseUser({ isBlocked: true }));
 
+    // Act & Assert
     await expect(
       useCase.execute({ email: 'test@example.com', password: 'StrongP@ss1234' }),
     ).rejects.toThrow(ForbiddenError);
@@ -80,8 +84,10 @@ describe('LoginUseCase', () => {
 
   // Camino 3: usuario existe, no bloqueado, sin contraseña registrada (ej. cuenta social incompleta)
   it('Camino 3: usuario sin contraseña registrada → lanza UnauthorizedError (401)', async () => {
+    // Arrange
     vi.mocked(userRepository.findByEmail).mockResolvedValue(baseUser({ password: undefined }));
 
+    // Act & Assert
     await expect(
       useCase.execute({ email: 'test@example.com', password: 'StrongP@ss1234' }),
     ).rejects.toThrow(UnauthorizedError);
@@ -90,9 +96,11 @@ describe('LoginUseCase', () => {
 
   // Camino 4: contraseña no coincide
   it('Camino 4: contraseña incorrecta → lanza UnauthorizedError (401)', async () => {
+    // Arrange
     vi.mocked(userRepository.findByEmail).mockResolvedValue(baseUser());
     vi.mocked(hashService.compare).mockResolvedValue(false);
 
+    // Act & Assert
     await expect(
       useCase.execute({ email: 'test@example.com', password: 'WrongP@ssword1' }),
     ).rejects.toThrow(UnauthorizedError);
@@ -100,11 +108,14 @@ describe('LoginUseCase', () => {
 
   // Camino 5: credenciales correctas
   it('Camino 5: credenciales válidas → emite JWT y retorna el usuario sin contraseña', async () => {
+    // Arrange
     vi.mocked(userRepository.findByEmail).mockResolvedValue(baseUser());
     vi.mocked(hashService.compare).mockResolvedValue(true);
 
+    // Act
     const result = await useCase.execute({ email: 'test@example.com', password: 'StrongP@ss1234' });
 
+    // Assert
     expect(jwtService.generateToken).toHaveBeenCalledWith({
       id: 'user-uuid-1',
       email: 'test@example.com',

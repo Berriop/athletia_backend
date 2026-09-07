@@ -42,27 +42,34 @@ describe('UpdateWorkoutUseCase', () => {
 
   // Camino 1: INICIO,1,2,3,FIN
   it('Camino 1: entrenamiento inexistente o de otro usuario → NotFoundError (404)', async () => {
+    // Arrange
     vi.mocked(workoutRepository.findById).mockResolvedValue(null);
 
+    // Act & Assert
     await expect(useCase.execute('workout-1', 'user-1', { title: 'Nuevo' })).rejects.toThrow(NotFoundError);
     expect(workoutRepository.update).not.toHaveBeenCalled();
   });
 
   // Camino 2: INICIO,1,2,4,5,6,FIN
   it('Camino 2: existe y es propio, pero la actualización falla → NotFoundError (404)', async () => {
+    // Arrange
     vi.mocked(workoutRepository.findById).mockResolvedValue(workout());
     vi.mocked(workoutRepository.update).mockResolvedValue(null);
 
+    // Act & Assert
     await expect(useCase.execute('workout-1', 'user-1', { title: 'Nuevo' })).rejects.toThrow(NotFoundError);
   });
 
   // Camino 3: INICIO,1,2,4,5,7,FIN
   it('Camino 3: existe y es propio, datos correctos → retorna el entrenamiento actualizado', async () => {
+    // Arrange
     vi.mocked(workoutRepository.findById).mockResolvedValue(workout());
     vi.mocked(workoutRepository.update).mockResolvedValue(workout({ energyLevel: 9 }));
 
+    // Act
     const result = await useCase.execute('workout-1', 'user-1', { energyLevel: 9 });
 
+    // Assert
     expect(workoutRepository.update).toHaveBeenCalledWith('workout-1', 'user-1', { energyLevel: 9 });
     expect(result.energyLevel).toBe(9);
   });

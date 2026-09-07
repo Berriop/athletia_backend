@@ -41,27 +41,34 @@ describe('UpdateMealUseCase', () => {
 
   // Camino 1: INICIO,1,2,3,FIN
   it('Camino 1: comida inexistente o de otro usuario → NotFoundError (404)', async () => {
+    // Arrange
     vi.mocked(mealRepository.findById).mockResolvedValue(null);
 
+    // Act & Assert
     await expect(useCase.execute('meal-1', 'user-1', { calories: 500 })).rejects.toThrow(NotFoundError);
     expect(mealRepository.update).not.toHaveBeenCalled();
   });
 
   // Camino 2: INICIO,1,2,4,5,6,FIN
   it('Camino 2: existe y es propia, pero la actualización falla → NotFoundError (404)', async () => {
+    // Arrange
     vi.mocked(mealRepository.findById).mockResolvedValue(meal());
     vi.mocked(mealRepository.update).mockResolvedValue(null);
 
+    // Act & Assert
     await expect(useCase.execute('meal-1', 'user-1', { calories: 500 })).rejects.toThrow(NotFoundError);
   });
 
   // Camino 3: INICIO,1,2,4,5,7,FIN
   it('Camino 3: existe y es propia, datos correctos → retorna la comida actualizada', async () => {
+    // Arrange
     vi.mocked(mealRepository.findById).mockResolvedValue(meal());
     vi.mocked(mealRepository.update).mockResolvedValue(meal({ calories: 700 }));
 
+    // Act
     const result = await useCase.execute('meal-1', 'user-1', { calories: 700 });
 
+    // Assert
     expect(mealRepository.update).toHaveBeenCalledWith('meal-1', 'user-1', { calories: 700 });
     expect(result.calories).toBe(700);
   });

@@ -55,33 +55,42 @@ describe('ResetPasswordUseCase', () => {
 
   // Camino 1: INICIO,1,2,3,FIN — cubre las 3 variantes de token inválido
   it('Camino 1a: token inexistente → ValidationError (400), no cambia nada', async () => {
+    // Arrange
     vi.mocked(userRepository.findByResetToken).mockResolvedValue(null);
 
+    // Act & Assert
     await expect(useCase.execute('bad-token', 'NewStr0ng@Pass')).rejects.toThrow(ValidationError);
     expect(userRepository.update).not.toHaveBeenCalled();
   });
 
   it('Camino 1b: token sin fecha de expiración registrada → ValidationError (400)', async () => {
+    // Arrange
     vi.mocked(userRepository.findByResetToken).mockResolvedValue(user({ resetPasswordExpires: null }));
 
+    // Act & Assert
     await expect(useCase.execute('valid-token', 'NewStr0ng@Pass')).rejects.toThrow(ValidationError);
   });
 
   it('Camino 1c: token vencido (expiró hace más de 15 minutos) → ValidationError (400)', async () => {
+    // Arrange
     vi.mocked(userRepository.findByResetToken).mockResolvedValue(
       user({ resetPasswordExpires: new Date(Date.now() - 60 * 1000) }),
     );
 
+    // Act & Assert
     await expect(useCase.execute('valid-token', 'NewStr0ng@Pass')).rejects.toThrow(ValidationError);
   });
 
   // Camino 2: INICIO,1,2,4,5,FIN
   it('Camino 2: token válido y vigente → actualiza la contraseña y limpia el token', async () => {
+    // Arrange
     vi.mocked(userRepository.findByResetToken).mockResolvedValue(user());
     vi.mocked(userRepository.update).mockResolvedValue(user());
 
+    // Act
     await useCase.execute('valid-token', 'NewStr0ng@Pass');
 
+    // Assert
     expect(userRepository.update).toHaveBeenCalledWith(
       'user-1',
       expect.objectContaining({ resetPasswordToken: null, resetPasswordExpires: null }),

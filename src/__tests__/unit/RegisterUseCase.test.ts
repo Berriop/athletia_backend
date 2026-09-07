@@ -42,6 +42,7 @@ describe('RegisterUseCase', () => {
 
   // Camino 2: INICIO,1,2,4,5,6,FIN — correo disponible
   it('Camino 2: correo disponible → crea el usuario, emite JWT y envía correo de verificación', async () => {
+    // Arrange
     vi.mocked(userRepository.findByEmail).mockResolvedValue(null);
     vi.mocked(userRepository.create).mockResolvedValue({
       id: 'user-uuid-1',
@@ -63,6 +64,7 @@ describe('RegisterUseCase', () => {
       updatedAt: new Date(),
     });
 
+    // Act
     const result = await useCase.execute({
       email: 'test@example.com',
       password: 'StrongP@ss1234',
@@ -70,6 +72,7 @@ describe('RegisterUseCase', () => {
       name: 'Test User',
     });
 
+    // Assert
     expect(userRepository.findByEmail).toHaveBeenCalledWith('test@example.com');
     expect(hashService.hash).toHaveBeenCalledWith('StrongP@ss1234');
     expect(jwtService.generateToken).toHaveBeenCalledWith({
@@ -85,6 +88,7 @@ describe('RegisterUseCase', () => {
 
   // Camino 1: INICIO,1,2,3,FIN — correo ya registrado
   it('Camino 1: correo ya registrado → lanza ConflictError (409) y no crea nada', async () => {
+    // Arrange
     vi.mocked(userRepository.findByEmail).mockResolvedValue({
       id: 'existing-id',
       email: 'test@example.com',
@@ -105,6 +109,7 @@ describe('RegisterUseCase', () => {
       updatedAt: new Date(),
     });
 
+    // Act & Assert
     await expect(
       useCase.execute({
         email: 'test@example.com',
