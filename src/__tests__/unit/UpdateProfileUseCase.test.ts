@@ -79,16 +79,47 @@ describe('UpdateProfileUseCase', () => {
     expect(result.user).not.toHaveProperty('password');
   });
 
-  it('un campo opcional enviado como cadena vacía se guarda como null (se elimina)', async () => {
+  it('campos opcionales enviados como cadena vacía se guardan como null (se eliminan)', async () => {
     // Arrange
     vi.mocked(userRepository.findById).mockResolvedValue(user({ gender: 'MALE' }));
     vi.mocked(userRepository.update).mockResolvedValue(user({ gender: null }));
 
     // Act
-    await useCase.execute('user-1', { gender: '' });
+    await useCase.execute('user-1', { gender: '', birthDate: '', experienceLevel: '' });
 
     // Assert
-    expect(userRepository.update).toHaveBeenCalledWith('user-1', expect.objectContaining({ gender: null }));
+    expect(userRepository.update).toHaveBeenCalledWith(
+      'user-1',
+      expect.objectContaining({ gender: null, birthDate: null, experienceLevel: null }),
+    );
+  });
+
+  it('campos opcionales enviados como null se guardan como null (se eliminan)', async () => {
+    // Arrange
+    vi.mocked(userRepository.findById).mockResolvedValue(user({ gender: 'MALE' }));
+    vi.mocked(userRepository.update).mockResolvedValue(user({ gender: null }));
+
+    // Act
+    await useCase.execute('user-1', { gender: null, birthDate: null, experienceLevel: null });
+
+    // Assert
+    expect(userRepository.update).toHaveBeenCalledWith(
+      'user-1',
+      expect.objectContaining({ gender: null, birthDate: null, experienceLevel: null }),
+    );
+  });
+
+  it('un birthDate válido (ISO string) se convierte a Date en el payload', async () => {
+    // Arrange
+    vi.mocked(userRepository.findById).mockResolvedValue(user());
+    vi.mocked(userRepository.update).mockResolvedValue(user());
+
+    // Act
+    await useCase.execute('user-1', { birthDate: '2000-05-10' });
+
+    // Assert
+    const payload = vi.mocked(userRepository.update).mock.calls[0][1] as Record<string, unknown>;
+    expect(payload.birthDate).toEqual(new Date('2000-05-10'));
   });
 
   it('un campo opcional que no se envía (undefined) no se toca', async () => {

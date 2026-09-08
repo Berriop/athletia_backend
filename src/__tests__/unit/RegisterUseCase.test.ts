@@ -119,4 +119,44 @@ describe('RegisterUseCase', () => {
     ).rejects.toThrow(ConflictError);
     expect(userRepository.create).not.toHaveBeenCalled();
   });
+
+  // Camino 2 sin nombre ni servicio de correo — opcionales se nulifican,
+  // la rama `if (this.emailService)` falsa se salta el envío.
+  it('Camino 2: sin name y sin emailService → guarda name null y no envía correo', async () => {
+    // Arrange
+    vi.mocked(userRepository.findByEmail).mockResolvedValue(null);
+    vi.mocked(userRepository.create).mockResolvedValue({
+      id: 'user-uuid-2',
+      email: 'lean@example.com',
+      password: 'hashed_pwd_123',
+      name: null,
+      birthDate: null,
+      gender: null,
+      heightCm: null,
+      weightKg: null,
+      experienceLevel: null,
+      role: 'USER',
+      isEmailVerified: false,
+      emailVerificationToken: 'some-token',
+      resetPasswordToken: null,
+      resetPasswordExpires: null,
+      isBlocked: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+    const noEmailUseCase = new RegisterUseCase(userRepository, hashService, jwtService);
+
+    // Act
+    const result = await noEmailUseCase.execute({
+      email: 'lean@example.com',
+      password: 'StrongP@ss1234',
+      confirmPassword: 'StrongP@ss1234',
+    });
+
+    // Assert
+    expect(userRepository.create).toHaveBeenCalledWith(expect.objectContaining({ name: null }));
+    expect(emailService.sendVerificationEmail).not.toHaveBeenCalled();
+    expect(result.token).toBe('mocked_jwt_token');
+    expect(result.user.email).toBe('lean@example.com');
+  });
 });

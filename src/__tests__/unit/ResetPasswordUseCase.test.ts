@@ -1,18 +1,16 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import bcrypt from 'bcrypt';
 import { ResetPasswordUseCase } from '../../application/use-cases/ResetPasswordUseCase';
 import { IUserRepository } from '../../domain/repositories/IUserRepository';
+import { IHashService } from '../../domain/services/IHashService';
 import { ValidationError } from '../../domain/errors/AppError';
 import { User } from '../../domain/entities/User';
 
 // RF-32 (parte 2) — Restablecer con el token. Basado en el diagrama "RF-32
 // Back Parte 2 (ResetPasswordUseCase)" (V(G)=2, 2 caminos básicos).
 //
-// Nota de arquitectura: a diferencia del resto de use-cases, este llama a
-// `bcrypt` directamente en vez de pasar por la abstracción IHashService
-// (inconsistencia ya señalada en el análisis del proyecto). Por eso aquí no
-// se mockea el hash — se deja correr bcrypt real, que es determinista en su
-// resultado (siempre produce un hash válido) aunque el valor cambie cada vez.
+// Nota de arquitectura: este use-case usa la abstracción IHashService (igual
+// que el resto del proyecto). Aquí se mockea el hashService para aislar la
+// lógica del use-case de la implementación criptográfica real.
 function user(overrides: Partial<User> = {}): User {
   return {
     id: 'user-1',
@@ -38,6 +36,7 @@ function user(overrides: Partial<User> = {}): User {
 
 describe('ResetPasswordUseCase', () => {
   let userRepository: IUserRepository;
+  let hashService: IHashService;
   let useCase: ResetPasswordUseCase;
 
   beforeEach(() => {
@@ -50,7 +49,11 @@ describe('ResetPasswordUseCase', () => {
       findByEmailVerificationToken: vi.fn(),
       findAll: vi.fn(),
     };
-    useCase = new ResetPasswordUseCase(userRepository);
+    hashService = {
+      hash: vi.fn(),
+      compare: vi.fn(),
+    };
+    useCase = new ResetPasswordUseCase(userRepository, hashService);
   });
 
   // Camino 1: INICIO,1,2,3,FIN — cubre las 3 variantes de token inválido
@@ -61,6 +64,7 @@ describe('ResetPasswordUseCase', () => {
     // Act & Assert
     await expect(useCase.execute('bad-token', 'NewStr0ng@Pass')).rejects.toThrow(ValidationError);
     expect(userRepository.update).not.toHaveBeenCalled();
+    expect(hashService.hash).not.toHaveBeenCalled();
   });
 
   it('Camino 1b: token sin fecha de expiración registrada → ValidationError (400)', async () => {
@@ -82,21 +86,24 @@ describe('ResetPasswordUseCase', () => {
   });
 
   // Camino 2: INICIO,1,2,4,5,FIN
-  it('Camino 2: token válido y vigente → actualiza la contraseña y limpia el token', async () => {
+  it('Camino 2: token válido y vigente → hashea la nueva contraseña y limpia el token', async () => {
     // Arrange
     vi.mocked(userRepository.findByResetToken).mockResolvedValue(user());
+    vi.mocked(hashService.hash).mockResolvedValue('hashed_new_password');
     vi.mocked(userRepository.update).mockResolvedValue(user());
 
     // Act
     await useCase.execute('valid-token', 'NewStr0ng@Pass');
 
     // Assert
+    expect(hashService.hash).toHaveBeenCalledWith('NewStr0ng@Pass');
     expect(userRepository.update).toHaveBeenCalledWith(
       'user-1',
-      expect.objectContaining({ resetPasswordToken: null, resetPasswordExpires: null }),
+      expect.objectContaining({
+        password: 'hashed_new_password',
+        resetPasswordToken: null,
+        resetPasswordExpires: null,
+      }),
     );
-    const newHash = vi.mocked(userRepository.update).mock.calls[0][1].password as string;
-    expect(newHash).not.toBe('old_hashed_password');
-    await expect(bcrypt.compare('NewStr0ng@Pass', newHash)).resolves.toBe(true);
   });
 });

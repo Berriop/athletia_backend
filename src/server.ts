@@ -82,9 +82,24 @@ const registerLimiter = rateLimit({
   },
 });
 
+const forgotPasswordLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    error: {
+      code: 'TOO_MANY_REQUESTS',
+      message: 'Too many password reset requests from this IP. Please try again after an hour',
+    },
+  },
+});
+
 app.use('/api/', globalLimiter);
 app.use('/api/v1/auth/login', loginLimiter);
 app.use('/api/v1/auth/register', registerLimiter);
+app.use('/api/v1/auth/forgot-password', forgotPasswordLimiter);
 
 // Healthcheck endpoint
 app.get('/health', (_req, res) => {

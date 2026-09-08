@@ -62,9 +62,7 @@ export class AuthController {
 
   forgotPassword = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { email } = req.body;
-      if (!email) throw new Error('Email is required');
-      await this.forgotPasswordUseCase.execute(email);
+      await this.forgotPasswordUseCase.execute(req.body.email);
       sendSuccess(res, { message: 'If email exists, a reset link has been sent.' });
     } catch (error) {
       next(error);
@@ -74,7 +72,6 @@ export class AuthController {
   resetPassword = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { token, newPassword } = req.body;
-      if (!token || !newPassword) throw new Error('Token and newPassword are required');
       await this.resetPasswordUseCase.execute(token, newPassword);
       sendSuccess(res, { message: 'Password has been reset successfully.' });
     } catch (error) {
