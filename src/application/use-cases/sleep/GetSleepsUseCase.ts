@@ -1,19 +1,15 @@
 import { ISleepRepository, SleepFilters } from '../../../domain/repositories/ISleepRepository';
 import { SleepLog } from '../../../domain/entities/SleepLog';
 import { QuerySleepDTO } from '../../dto/sleep.dto';
+import { resolvePagination, buildPaginatedResult, PaginatedResult } from '../pagination';
 
-export interface GetSleepsResponse {
-  data: SleepLog[];
-  meta: { page: number; limit: number; total: number; totalPages: number };
-}
+export type GetSleepsResponse = PaginatedResult<SleepLog>;
 
 export class GetSleepsUseCase {
   constructor(private sleepRepository: ISleepRepository) {}
 
   async execute(userId: string, queryParams: QuerySleepDTO): Promise<GetSleepsResponse> {
-    const page = queryParams.page || 1;
-    const limit = queryParams.limit || 10;
-    const skip = (page - 1) * limit;
+    const { page, limit, skip } = resolvePagination(queryParams);
 
     const filters: SleepFilters = {};
     if (queryParams.date) filters.date = new Date(queryParams.date);
@@ -23,9 +19,6 @@ export class GetSleepsUseCase {
       this.sleepRepository.count(userId, filters),
     ]);
 
-    return {
-      data: sleeps,
-      meta: { page, limit, total, totalPages: Math.ceil(total / limit) },
-    };
+    return buildPaginatedResult(sleeps, page, limit, total);
   }
 }

@@ -1,19 +1,15 @@
 import { IWorkoutRepository, WorkoutFilters } from '../../../domain/repositories/IWorkoutRepository';
 import { Workout } from '../../../domain/entities/Workout';
 import { QueryWorkoutDTO } from '../../dto/workout.dto';
+import { resolvePagination, buildPaginatedResult, PaginatedResult } from '../pagination';
 
-export interface GetWorkoutsResponse {
-  data: Workout[];
-  meta: { page: number; limit: number; total: number; totalPages: number };
-}
+export type GetWorkoutsResponse = PaginatedResult<Workout>;
 
 export class GetWorkoutsUseCase {
   constructor(private workoutRepository: IWorkoutRepository) {}
 
   async execute(userId: string, queryParams: QueryWorkoutDTO): Promise<GetWorkoutsResponse> {
-    const page = queryParams.page || 1;
-    const limit = queryParams.limit || 10;
-    const skip = (page - 1) * limit;
+    const { page, limit, skip } = resolvePagination(queryParams);
 
     const filters: WorkoutFilters = {};
     if (queryParams.bodyPart) filters.bodyPart = queryParams.bodyPart;
@@ -24,9 +20,6 @@ export class GetWorkoutsUseCase {
       this.workoutRepository.count(userId, filters),
     ]);
 
-    return {
-      data: workouts,
-      meta: { page, limit, total, totalPages: Math.ceil(total / limit) },
-    };
+    return buildPaginatedResult(workouts, page, limit, total);
   }
 }
