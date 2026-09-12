@@ -1,67 +1,19 @@
-import { Request, Response, NextFunction } from 'express';
+import { Meal } from '../../domain/entities/Meal';
 import { CreateMealUseCase } from '../../application/use-cases/meal/CreateMealUseCase';
 import { GetMealsUseCase } from '../../application/use-cases/meal/GetMealsUseCase';
 import { GetMealByIdUseCase } from '../../application/use-cases/meal/GetMealByIdUseCase';
 import { UpdateMealUseCase } from '../../application/use-cases/meal/UpdateMealUseCase';
 import { DeleteMealUseCase } from '../../application/use-cases/meal/DeleteMealUseCase';
-import { sendCreated, sendNoContent, sendSuccess } from '../helpers/response.helper';
+import { CrudController } from './CrudController';
 
-export class MealController {
+export class MealController extends CrudController<Meal> {
   constructor(
-    private createUseCase: CreateMealUseCase,
-    private getAllUseCase: GetMealsUseCase,
-    private getByIdUseCase: GetMealByIdUseCase,
-    private updateUseCase: UpdateMealUseCase,
-    private deleteUseCase: DeleteMealUseCase,
-  ) {}
-
-  async create(req: Request, res: Response, next: NextFunction): Promise<void> {
-    try {
-      const userId = req.user!.id;
-      const meal = await this.createUseCase.execute(userId, req.body);
-      sendCreated(res, meal);
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
-    try {
-      const userId = req.user!.id;
-      const result = await this.getAllUseCase.execute(userId, res.locals.query ?? req.query);
-      sendSuccess(res, result.data, result.meta);
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  async getById(req: Request, res: Response, next: NextFunction): Promise<void> {
-    try {
-      const userId = req.user!.id;
-      const meal = await this.getByIdUseCase.execute(String(req.params['id']), userId);
-      sendSuccess(res, meal);
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  async update(req: Request, res: Response, next: NextFunction): Promise<void> {
-    try {
-      const userId = req.user!.id;
-      const meal = await this.updateUseCase.execute(String(req.params['id']), userId, req.body);
-      sendSuccess(res, meal);
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
-    try {
-      const userId = req.user!.id;
-      await this.deleteUseCase.execute(String(req.params['id']), userId);
-      sendNoContent(res);
-    } catch (error) {
-      next(error);
-    }
+    createUseCase: CreateMealUseCase,
+    getAllUseCase: GetMealsUseCase,
+    getByIdUseCase: GetMealByIdUseCase,
+    updateUseCase: UpdateMealUseCase,
+    deleteUseCase: DeleteMealUseCase,
+  ) {
+    super(createUseCase, getAllUseCase, getByIdUseCase, updateUseCase, deleteUseCase);
   }
 }

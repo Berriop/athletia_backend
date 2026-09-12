@@ -1,19 +1,15 @@
 import { IInjuryRepository, InjuryFilters } from '../../../domain/repositories/IInjuryRepository';
 import { Injury } from '../../../domain/entities/Injury';
 import { QueryInjuryDTO } from '../../dto/injury.dto';
+import { resolvePagination, buildPaginatedResult, PaginatedResult } from '../pagination';
 
-export interface GetInjuriesResponse {
-  data: Injury[];
-  meta: { page: number; limit: number; total: number; totalPages: number };
-}
+export type GetInjuriesResponse = PaginatedResult<Injury>;
 
 export class GetInjuriesUseCase {
   constructor(private injuryRepository: IInjuryRepository) {}
 
   async execute(userId: string, queryParams: QueryInjuryDTO): Promise<GetInjuriesResponse> {
-    const page = queryParams.page || 1;
-    const limit = queryParams.limit || 10;
-    const skip = (page - 1) * limit;
+    const { page, limit, skip } = resolvePagination(queryParams);
 
     const filters: InjuryFilters = {};
     if (queryParams.isActive !== undefined) filters.isActive = queryParams.isActive;
@@ -24,9 +20,6 @@ export class GetInjuriesUseCase {
       this.injuryRepository.count(userId, filters),
     ]);
 
-    return {
-      data: injuries,
-      meta: { page, limit, total, totalPages: Math.ceil(total / limit) },
-    };
+    return buildPaginatedResult(injuries, page, limit, total);
   }
 }
