@@ -3,8 +3,7 @@ import { SearchGymsUseCase } from '../../application/use-cases/gym/SearchGymsUse
 import { IGoogleMapsService } from '../../domain/services/IGoogleMapsService';
 import { Gym } from '../../domain/entities/Gym';
 
-// RF nuevo — Buscar gimnasios por texto. Función lineal, sin decisiones
-// (1 camino básico: delega directamente en IGoogleMapsService.searchGyms).
+
 function gym(overrides: Partial<Gym> = {}): Gym {
   return {
     placeId: 'place-1',

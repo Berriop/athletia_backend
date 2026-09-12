@@ -4,9 +4,6 @@ import { IUserRepository } from '../../domain/repositories/IUserRepository';
 import { ForbiddenError, NotFoundError } from '../../domain/errors/AppError';
 import { User } from '../../domain/entities/User';
 
-// RF nuevo — Gestión de usuarios en el Panel Admin (bloquear/desbloquear).
-// Basado en la lógica real de ToggleUserBlockUseCase (3 caminos básicos:
-// auto-bloqueo prohibido, usuario inexistente, bloqueo/desbloqueo exitoso).
 function user(overrides: Partial<User> = {}): User {
   return {
     id: 'user-1',

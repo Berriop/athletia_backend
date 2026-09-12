@@ -3,9 +3,6 @@ import { GetAllUsersUseCase } from '../../application/use-cases/admin/GetAllUser
 import { IUserRepository } from '../../domain/repositories/IUserRepository';
 import { User } from '../../domain/entities/User';
 
-// RF nuevo — Acceder al panel administrativo (listado de usuarios). Función
-// lineal, sin decisiones (1 camino básico: lista todos los usuarios y les
-// quita la contraseña antes de retornarlos).
 function user(overrides: Partial<User> = {}): User {
   return {
     id: 'user-1',
