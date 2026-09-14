@@ -4,15 +4,12 @@ import { IUserRepository } from '../../domain/repositories/IUserRepository';
 import { ForbiddenError, NotFoundError } from '../../domain/errors/AppError';
 import { User } from '../../domain/entities/User';
 
-// RF-30 (parte 2) — Bloquear/desbloquear un usuario desde el panel de
-// administración. Basado en el diagrama "RF-30 Back Parte 2
-// (ToggleUserBlockUseCase)" (Patrón A, V(G)=3, 3 caminos básicos).
 function user(overrides: Partial<User> = {}): User {
   return {
     id: 'user-1',
-    email: 'user@test.com',
-    password: 'hashed-secret',
-    name: 'Jane Doe',
+    email: 'user1@example.com',
+    password: 'hashed_pwd',
+    name: 'User One',
     birthDate: null,
     gender: null,
     heightCm: null,
@@ -47,38 +44,62 @@ describe('ToggleUserBlockUseCase', () => {
     useCase = new ToggleUserBlockUseCase(userRepository);
   });
 
-  // Camino 1: INICIO,1,FIN
-  it('Camino 1: un admin intenta bloquearse a sí mismo → ForbiddenError', async () => {
+  // Camino 1: INICIO,1,2,FIN — un admin intenta bloquearse a sí mismo
+  it('Camino 1: el admin intenta bloquear su propia cuenta → ForbiddenError (403)', async () => {
+    // Arrange & Act & Assert
     await expect(useCase.execute('admin-1', 'admin-1')).rejects.toThrow(ForbiddenError);
     expect(userRepository.findById).not.toHaveBeenCalled();
   });
 
-  // Camino 2: INICIO,1,2,3,FIN
-  it('Camino 2: usuario objetivo no existe → NotFoundError', async () => {
+  // Camino 2: INICIO,1,3,4,FIN — usuario inexistente
+  it('Camino 2: el usuario a bloquear no existe → NotFoundError (404)', async () => {
+    // Arrange
     vi.mocked(userRepository.findById).mockResolvedValue(null);
 
-    await expect(useCase.execute('user-1', 'admin-1')).rejects.toThrow(NotFoundError);
+    // Act & Assert
+    await expect(useCase.execute('user-404', 'admin-1')).rejects.toThrow(NotFoundError);
     expect(userRepository.update).not.toHaveBeenCalled();
   });
 
-  // Camino 3: INICIO,1,2,4,5,6,FIN
-  it('Camino 3: usuario existe → invierte isBlocked y retorna sin la contraseña', async () => {
+  // Camino 3: INICIO,1,3,5,6,FIN — usuario activo → queda bloqueado
+  it('Camino 3: usuario activo → lo bloquea y retorna el usuario actualizado sin contraseña', async () => {
+    // Arrange
     vi.mocked(userRepository.findById).mockResolvedValue(user({ isBlocked: false }));
     vi.mocked(userRepository.update).mockResolvedValue(user({ isBlocked: true }));
 
+    // Act
     const result = await useCase.execute('user-1', 'admin-1');
 
+    // Assert
     expect(userRepository.update).toHaveBeenCalledWith('user-1', { isBlocked: true });
-    expect(result).not.toHaveProperty('password');
     expect(result.isBlocked).toBe(true);
+    expect(result).not.toHaveProperty('password');
   });
 
-  it('Camino 3: no requiere adminUserId (llamada sin verificación de auto-bloqueo)', async () => {
+  // Mismo camino 3, sentido inverso — usuario ya bloqueado → queda desbloqueado
+  it('usuario ya bloqueado → lo desbloquea (toggle inverso)', async () => {
+    // Arrange
+    vi.mocked(userRepository.findById).mockResolvedValue(user({ isBlocked: true }));
+    vi.mocked(userRepository.update).mockResolvedValue(user({ isBlocked: false }));
+
+    // Act
+    const result = await useCase.execute('user-1', 'admin-1');
+
+    // Assert
+    expect(userRepository.update).toHaveBeenCalledWith('user-1', { isBlocked: false });
+    expect(result.isBlocked).toBe(false);
+  });
+
+  // Camino sin adminUserId (p. ej. llamado internamente): no debe lanzar ForbiddenError
+  it('sin adminUserId → no evalúa auto-bloqueo y bloquea con normalidad', async () => {
+    // Arrange
     vi.mocked(userRepository.findById).mockResolvedValue(user({ isBlocked: false }));
     vi.mocked(userRepository.update).mockResolvedValue(user({ isBlocked: true }));
 
+    // Act
     const result = await useCase.execute('user-1');
 
+    // Assert
     expect(result.isBlocked).toBe(true);
   });
 });

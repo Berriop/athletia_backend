@@ -1,9 +1,12 @@
 import { IUserRepository } from '../../domain/repositories/IUserRepository';
+import { IHashService } from '../../domain/services/IHashService';
 import { ValidationError } from '../../domain/errors/AppError';
-import bcrypt from 'bcrypt';
 
 export class ResetPasswordUseCase {
-  constructor(private readonly userRepository: IUserRepository) {}
+  constructor(
+    private readonly userRepository: IUserRepository,
+    private readonly hashService: IHashService,
+  ) {}
 
   async execute(token: string, newPassword: string): Promise<void> {
     const user = await this.userRepository.findByResetToken(token);
@@ -12,13 +15,12 @@ export class ResetPasswordUseCase {
       throw new ValidationError('Token inválido o expirado');
     }
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(newPassword, salt);
+    const hashedPassword = await this.hashService.hash(newPassword);
 
     await this.userRepository.update(user.id, {
       password: hashedPassword,
       resetPasswordToken: null,
-      resetPasswordExpires: null
-    } as any);
+      resetPasswordExpires: null,
+    });
   }
 }

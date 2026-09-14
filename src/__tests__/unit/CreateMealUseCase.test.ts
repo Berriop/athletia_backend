@@ -23,6 +23,7 @@ describe('CreateMealUseCase', () => {
 
   // Camino único: INICIO,1,2,3,FIN
   it('Camino 1: datos válidos → crea la comida asociada al usuario autenticado (201)', async () => {
+    // Arrange
     const created: Meal = {
       id: 'meal-1',
       name: 'Pollo con arroz',
@@ -38,6 +39,7 @@ describe('CreateMealUseCase', () => {
     };
     vi.mocked(mealRepository.create).mockResolvedValue(created);
 
+    // Act
     const result = await useCase.execute('user-1', {
       name: 'Pollo con arroz',
       calories: 600,
@@ -48,6 +50,7 @@ describe('CreateMealUseCase', () => {
       date: new Date(),
     });
 
+    // Assert
     expect(mealRepository.create).toHaveBeenCalledWith(expect.objectContaining({ userId: 'user-1', calories: 600 }));
     expect(result).toEqual(created);
   });

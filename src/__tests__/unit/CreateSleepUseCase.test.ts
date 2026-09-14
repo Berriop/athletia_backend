@@ -23,6 +23,7 @@ describe('CreateSleepUseCase', () => {
 
   // Camino único: INICIO,1,2,3,FIN
   it('Camino 1: datos válidos → crea el registro asociado al usuario autenticado (201)', async () => {
+    // Arrange
     const created: SleepLog = {
       id: 'sleep-1',
       hoursSlept: 8,
@@ -37,6 +38,7 @@ describe('CreateSleepUseCase', () => {
     };
     vi.mocked(sleepRepository.create).mockResolvedValue(created);
 
+    // Act
     const result = await useCase.execute('user-1', {
       hoursSlept: 8,
       sleepQuality: 9,
@@ -45,6 +47,7 @@ describe('CreateSleepUseCase', () => {
       date: new Date('2026-08-20'),
     });
 
+    // Assert
     expect(sleepRepository.create).toHaveBeenCalledWith(
       expect.objectContaining({ userId: 'user-1', hoursSlept: 8, notes: null }),
     );
@@ -52,8 +55,10 @@ describe('CreateSleepUseCase', () => {
   });
 
   it('cuando no se envían notas, las guarda como null (no undefined)', async () => {
+    // Arrange
     vi.mocked(sleepRepository.create).mockResolvedValue({} as SleepLog);
 
+    // Act
     await useCase.execute('user-1', {
       hoursSlept: 6,
       sleepQuality: 5,
@@ -62,6 +67,7 @@ describe('CreateSleepUseCase', () => {
       date: new Date(),
     });
 
+    // Assert
     const callArg = vi.mocked(sleepRepository.create).mock.calls[0][0];
     expect(callArg.notes).toBeNull();
   });

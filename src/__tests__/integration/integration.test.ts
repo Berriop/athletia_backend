@@ -15,6 +15,11 @@ describe('API Integration Workflows', () => {
     weightKg: 75,
     experienceLevel: 'INTERMEDIATE' as const,
     role: 'USER' as const,
+    isEmailVerified: true,
+    emailVerificationToken: null,
+    resetPasswordToken: null,
+    resetPasswordExpires: null,
+    isBlocked: false,
     createdAt: new Date(),
     updatedAt: new Date(),
   };
@@ -31,9 +36,11 @@ describe('API Integration Workflows', () => {
 
   describe('Auth Endpoints', () => {
     it('POST /api/v1/auth/register creates user and returns token', async () => {
+      // Arrange
       vi.spyOn(container.userRepository, 'findByEmail').mockResolvedValue(null);
       vi.spyOn(container.userRepository, 'create').mockResolvedValue(testUser);
 
+      // Act
       const response = await request(app)
         .post('/api/v1/auth/register')
         .send({
@@ -43,6 +50,7 @@ describe('API Integration Workflows', () => {
           name: 'Integration Tester',
         });
 
+      // Assert
       expect(response.status).toBe(201);
       expect(response.body.success).toBe(true);
       expect(response.body.data).toHaveProperty('token');
@@ -50,12 +58,15 @@ describe('API Integration Workflows', () => {
     });
 
     it('GET /api/v1/auth/me returns current user profile', async () => {
+      // Arrange
       vi.spyOn(container.userRepository, 'findById').mockResolvedValue(testUser);
 
+      // Act
       const response = await request(app)
         .get('/api/v1/auth/me')
         .set('Authorization', `Bearer ${validToken}`);
 
+      // Assert
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
       expect(response.body.data.id).toBe(testUser.id);
@@ -80,8 +91,10 @@ describe('API Integration Workflows', () => {
     };
 
     it('POST /api/v1/workouts creates workout for authenticated user', async () => {
+      // Arrange
       vi.spyOn(container.workoutRepository, 'create').mockResolvedValue(mockWorkout);
 
+      // Act
       const response = await request(app)
         .post('/api/v1/workouts')
         .set('Authorization', `Bearer ${validToken}`)
@@ -95,19 +108,23 @@ describe('API Integration Workflows', () => {
           date: new Date().toISOString(),
         });
 
+      // Assert
       expect(response.status).toBe(201);
       expect(response.body.success).toBe(true);
       expect(response.body.data.title).toBe('Chest Day');
     });
 
     it('GET /api/v1/workouts returns paginated workouts', async () => {
+      // Arrange
       vi.spyOn(container.workoutRepository, 'findAll').mockResolvedValue([mockWorkout]);
       vi.spyOn(container.workoutRepository, 'count').mockResolvedValue(1);
 
+      // Act
       const response = await request(app)
         .get('/api/v1/workouts?page=1&limit=10')
         .set('Authorization', `Bearer ${validToken}`);
 
+      // Assert
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
       expect(response.body.data).toHaveLength(1);
@@ -120,13 +137,16 @@ describe('API Integration Workflows', () => {
     });
 
     it('DELETE /api/v1/workouts/:id deletes workout (204 No Content)', async () => {
+      // Arrange
       vi.spyOn(container.workoutRepository, 'findById').mockResolvedValue(mockWorkout);
       vi.spyOn(container.workoutRepository, 'delete').mockResolvedValue(true);
 
+      // Act
       const response = await request(app)
         .delete('/api/v1/workouts/workout-1')
         .set('Authorization', `Bearer ${validToken}`);
 
+      // Assert
       expect(response.status).toBe(204);
     });
   });

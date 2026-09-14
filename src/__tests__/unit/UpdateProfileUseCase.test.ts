@@ -48,25 +48,30 @@ describe('UpdateProfileUseCase', () => {
 
   // Camino 1: INICIO,1,2,3,FIN
   it('Camino 1: userId no corresponde a ningún usuario → NotFoundError (404)', async () => {
+    // Arrange
     vi.mocked(userRepository.findById).mockResolvedValue(null);
 
+    // Act & Assert
     await expect(useCase.execute('user-1', { name: 'Nuevo nombre' })).rejects.toThrow(NotFoundError);
     expect(userRepository.update).not.toHaveBeenCalled();
   });
 
   // Camino 2: INICIO,1,2,4,5,FIN
   it('Camino 2: usuario existe → normaliza género/experiencia y actualiza sin exponer la contraseña', async () => {
+    // Arrange
     vi.mocked(userRepository.findById).mockResolvedValue(user());
     vi.mocked(userRepository.update).mockResolvedValue(
       user({ name: 'Nuevo nombre', gender: 'MALE', experienceLevel: 'ADVANCED' }),
     );
 
+    // Act
     const result = await useCase.execute('user-1', {
       name: 'Nuevo nombre',
       gender: 'male',
       experienceLevel: 'advanced',
     });
 
+    // Assert
     expect(userRepository.update).toHaveBeenCalledWith(
       'user-1',
       expect.objectContaining({ name: 'Nuevo nombre', gender: 'MALE', experienceLevel: 'ADVANCED' }),
@@ -74,21 +79,58 @@ describe('UpdateProfileUseCase', () => {
     expect(result.user).not.toHaveProperty('password');
   });
 
-  it('un campo opcional enviado como cadena vacía se guarda como null (se elimina)', async () => {
+  it('campos opcionales enviados como cadena vacía se guardan como null (se eliminan)', async () => {
+    // Arrange
     vi.mocked(userRepository.findById).mockResolvedValue(user({ gender: 'MALE' }));
     vi.mocked(userRepository.update).mockResolvedValue(user({ gender: null }));
 
-    await useCase.execute('user-1', { gender: '' });
+    // Act
+    await useCase.execute('user-1', { gender: '', birthDate: '', experienceLevel: '' });
 
-    expect(userRepository.update).toHaveBeenCalledWith('user-1', expect.objectContaining({ gender: null }));
+    // Assert
+    expect(userRepository.update).toHaveBeenCalledWith(
+      'user-1',
+      expect.objectContaining({ gender: null, birthDate: null, experienceLevel: null }),
+    );
   });
 
-  it('un campo opcional que no se envía (undefined) no se toca', async () => {
+  it('campos opcionales enviados como null se guardan como null (se eliminan)', async () => {
+    // Arrange
+    vi.mocked(userRepository.findById).mockResolvedValue(user({ gender: 'MALE' }));
+    vi.mocked(userRepository.update).mockResolvedValue(user({ gender: null }));
+
+    // Act
+    await useCase.execute('user-1', { gender: null, birthDate: null, experienceLevel: null });
+
+    // Assert
+    expect(userRepository.update).toHaveBeenCalledWith(
+      'user-1',
+      expect.objectContaining({ gender: null, birthDate: null, experienceLevel: null }),
+    );
+  });
+
+  it('un birthDate válido (ISO string) se convierte a Date en el payload', async () => {
+    // Arrange
     vi.mocked(userRepository.findById).mockResolvedValue(user());
     vi.mocked(userRepository.update).mockResolvedValue(user());
 
+    // Act
+    await useCase.execute('user-1', { birthDate: '2000-05-10' });
+
+    // Assert
+    const payload = vi.mocked(userRepository.update).mock.calls[0][1] as Record<string, unknown>;
+    expect(payload.birthDate).toEqual(new Date('2000-05-10'));
+  });
+
+  it('un campo opcional que no se envía (undefined) no se toca', async () => {
+    // Arrange
+    vi.mocked(userRepository.findById).mockResolvedValue(user());
+    vi.mocked(userRepository.update).mockResolvedValue(user());
+
+    // Act
     await useCase.execute('user-1', { name: 'Solo el nombre cambia' });
 
+    // Assert
     const payload = vi.mocked(userRepository.update).mock.calls[0][1];
     expect(payload).not.toHaveProperty('gender');
     expect(payload).not.toHaveProperty('birthDate');

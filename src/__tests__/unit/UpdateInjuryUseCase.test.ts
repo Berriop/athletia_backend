@@ -39,27 +39,34 @@ describe('UpdateInjuryUseCase', () => {
 
   // Camino 1: INICIO,1,2,3,FIN
   it('Camino 1: lesión inexistente o de otro usuario → NotFoundError (404)', async () => {
+    // Arrange
     vi.mocked(injuryRepository.findById).mockResolvedValue(null);
 
+    // Act & Assert
     await expect(useCase.execute('injury-1', 'user-1', { severity: 3 })).rejects.toThrow(NotFoundError);
     expect(injuryRepository.update).not.toHaveBeenCalled();
   });
 
   // Camino 2: INICIO,1,2,4,5,6,FIN
   it('Camino 2: existe y es propia, pero la actualización falla → NotFoundError (404)', async () => {
+    // Arrange
     vi.mocked(injuryRepository.findById).mockResolvedValue(injury());
     vi.mocked(injuryRepository.update).mockResolvedValue(null);
 
+    // Act & Assert
     await expect(useCase.execute('injury-1', 'user-1', { severity: 3 })).rejects.toThrow(NotFoundError);
   });
 
   // Camino 3: INICIO,1,2,4,5,7,FIN — incluye marcar la lesión como recuperada (isActive=false)
   it('Camino 3: existe y es propia → permite marcarla como inactiva (recuperada)', async () => {
+    // Arrange
     vi.mocked(injuryRepository.findById).mockResolvedValue(injury());
     vi.mocked(injuryRepository.update).mockResolvedValue(injury({ isActive: false }));
 
+    // Act
     const result = await useCase.execute('injury-1', 'user-1', { isActive: false });
 
+    // Assert
     expect(injuryRepository.update).toHaveBeenCalledWith('injury-1', 'user-1', { isActive: false });
     expect(result.isActive).toBe(false);
   });

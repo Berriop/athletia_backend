@@ -40,25 +40,31 @@ describe('DeleteSleepUseCase', () => {
 
   // Camino 1: INICIO,1,2,3,FIN
   it('Camino 1: registro inexistente o de otro usuario → NotFoundError (404)', async () => {
+    // Arrange
     vi.mocked(sleepRepository.findById).mockResolvedValue(null);
 
+    // Act & Assert
     await expect(useCase.execute('sleep-1', 'user-1')).rejects.toThrow(NotFoundError);
     expect(sleepRepository.delete).not.toHaveBeenCalled();
   });
 
   // Camino 2: INICIO,1,2,4,5,6,FIN
   it('Camino 2: existe y es propio, pero la eliminación falla → NotFoundError (404)', async () => {
+    // Arrange
     vi.mocked(sleepRepository.findById).mockResolvedValue(sleepLog());
     vi.mocked(sleepRepository.delete).mockResolvedValue(false);
 
+    // Act & Assert
     await expect(useCase.execute('sleep-1', 'user-1')).rejects.toThrow(NotFoundError);
   });
 
   // Camino 3: INICIO,1,2,4,5,7,FIN
   it('Camino 3: existe y es propio → elimina el registro (204 No Content)', async () => {
+    // Arrange
     vi.mocked(sleepRepository.findById).mockResolvedValue(sleepLog());
     vi.mocked(sleepRepository.delete).mockResolvedValue(true);
 
+    // Act & Assert
     await expect(useCase.execute('sleep-1', 'user-1')).resolves.toBeUndefined();
     expect(sleepRepository.delete).toHaveBeenCalledWith('sleep-1', 'user-1');
   });

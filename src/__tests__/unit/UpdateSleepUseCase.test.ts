@@ -40,27 +40,34 @@ describe('UpdateSleepUseCase', () => {
 
   // Camino 1: INICIO,1,2,3,FIN
   it('Camino 1: registro inexistente o de otro usuario → NotFoundError (404)', async () => {
+    // Arrange
     vi.mocked(sleepRepository.findById).mockResolvedValue(null);
 
+    // Act & Assert
     await expect(useCase.execute('sleep-1', 'user-1', { hoursSlept: 8 })).rejects.toThrow(NotFoundError);
     expect(sleepRepository.update).not.toHaveBeenCalled();
   });
 
   // Camino 2: INICIO,1,2,4,5,6,FIN
   it('Camino 2: existe y es propio, pero la actualización falla → NotFoundError (404)', async () => {
+    // Arrange
     vi.mocked(sleepRepository.findById).mockResolvedValue(sleepLog());
     vi.mocked(sleepRepository.update).mockResolvedValue(null);
 
+    // Act & Assert
     await expect(useCase.execute('sleep-1', 'user-1', { hoursSlept: 8 })).rejects.toThrow(NotFoundError);
   });
 
   // Camino 3: INICIO,1,2,4,5,7,FIN
   it('Camino 3: existe y es propio, datos correctos → retorna el registro actualizado', async () => {
+    // Arrange
     vi.mocked(sleepRepository.findById).mockResolvedValue(sleepLog());
     vi.mocked(sleepRepository.update).mockResolvedValue(sleepLog({ hoursSlept: 8 }));
 
+    // Act
     const result = await useCase.execute('sleep-1', 'user-1', { hoursSlept: 8 });
 
+    // Assert
     expect(sleepRepository.findById).toHaveBeenCalledWith('sleep-1', 'user-1');
     expect(sleepRepository.update).toHaveBeenCalledWith('sleep-1', 'user-1', { hoursSlept: 8 });
     expect(result.hoursSlept).toBe(8);

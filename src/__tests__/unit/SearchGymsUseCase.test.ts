@@ -3,16 +3,16 @@ import { SearchGymsUseCase } from '../../application/use-cases/gym/SearchGymsUse
 import { IGoogleMapsService } from '../../domain/services/IGoogleMapsService';
 import { Gym } from '../../domain/entities/Gym';
 
-// RF-18 — Búsqueda de gimnasios por texto. Basado en el diagrama
-// "RF-18 Back (SearchGymsUseCase)" (Patrón A, V(G)=1, lineal, 1 camino básico).
+
 function gym(overrides: Partial<Gym> = {}): Gym {
   return {
     placeId: 'place-1',
-    name: 'PowerFit Gym',
-    address: 'Calle 10 # 20-30',
-    lat: 4.6, lng: -74.1,
-    rating: 4.5,
-    userRatingsTotal: 120,
+    name: 'Smart Fit Poblado',
+    address: 'Cra 43A, Medellín',
+    lat: 6.209,
+    lng: -75.567,
+    rating: 4.3,
+    userRatingsTotal: 512,
     openNow: true,
     types: ['gym'],
     ...overrides,
@@ -31,31 +31,38 @@ describe('SearchGymsUseCase', () => {
     useCase = new SearchGymsUseCase(googleMapsService);
   });
 
-  // Camino 1: INICIO,1,2,3,FIN
-  it('Camino 1: arma los parámetros de búsqueda y retorna los gimnasios encontrados', async () => {
-    const results = [gym()];
-    vi.mocked(googleMapsService.searchGyms).mockResolvedValue(results);
+  // Camino único: INICIO,1,FIN — con coordenadas para priorizar cercanía
+  it('Camino 1: texto de búsqueda con lat/lng → delega en el servicio y retorna los gimnasios encontrados', async () => {
+    // Arrange
+    const found = [gym(), gym({ placeId: 'place-2', name: 'Bodytech Envigado' })];
+    vi.mocked(googleMapsService.searchGyms).mockResolvedValue(found);
 
-    const response = await useCase.execute({ q: 'PowerFit', lat: 4.6, lng: -74.1 });
+    // Act
+    const result = await useCase.execute({ q: 'crossfit', lat: 6.209, lng: -75.567 });
 
+    // Assert
     expect(googleMapsService.searchGyms).toHaveBeenCalledWith({
-      query: 'PowerFit',
-      lat: 4.6,
-      lng: -74.1,
+      query: 'crossfit',
+      lat: 6.209,
+      lng: -75.567,
     });
-    expect(response).toEqual(results);
+    expect(result).toEqual(found);
   });
 
-  it('Camino 1: funciona sin coordenadas opcionales (solo texto)', async () => {
+  // Mismo camino único, sin coordenadas — confirma que lat/lng quedan undefined y no rompe la llamada
+  it('texto de búsqueda sin coordenadas → delega en el servicio con lat/lng undefined', async () => {
+    // Arrange
     vi.mocked(googleMapsService.searchGyms).mockResolvedValue([]);
 
-    const response = await useCase.execute({ q: 'CrossFit' });
+    // Act
+    const result = await useCase.execute({ q: 'gimnasio 24 horas' });
 
+    // Assert
     expect(googleMapsService.searchGyms).toHaveBeenCalledWith({
-      query: 'CrossFit',
+      query: 'gimnasio 24 horas',
       lat: undefined,
       lng: undefined,
     });
-    expect(response).toEqual([]);
+    expect(result).toEqual([]);
   });
 });

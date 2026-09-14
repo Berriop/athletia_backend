@@ -41,25 +41,31 @@ describe('DeleteMealUseCase', () => {
 
   // Camino 1: INICIO,1,2,3,FIN
   it('Camino 1: comida inexistente o de otro usuario → NotFoundError (404)', async () => {
+    // Arrange
     vi.mocked(mealRepository.findById).mockResolvedValue(null);
 
+    // Act & Assert
     await expect(useCase.execute('meal-1', 'user-1')).rejects.toThrow(NotFoundError);
     expect(mealRepository.delete).not.toHaveBeenCalled();
   });
 
   // Camino 2: INICIO,1,2,4,5,6,FIN
   it('Camino 2: existe y es propia, pero la eliminación falla → NotFoundError (404)', async () => {
+    // Arrange
     vi.mocked(mealRepository.findById).mockResolvedValue(meal());
     vi.mocked(mealRepository.delete).mockResolvedValue(false);
 
+    // Act & Assert
     await expect(useCase.execute('meal-1', 'user-1')).rejects.toThrow(NotFoundError);
   });
 
   // Camino 3: INICIO,1,2,4,5,7,FIN
   it('Camino 3: existe y es propia → elimina la comida (204 No Content)', async () => {
+    // Arrange
     vi.mocked(mealRepository.findById).mockResolvedValue(meal());
     vi.mocked(mealRepository.delete).mockResolvedValue(true);
 
+    // Act & Assert
     await expect(useCase.execute('meal-1', 'user-1')).resolves.toBeUndefined();
     expect(mealRepository.delete).toHaveBeenCalledWith('meal-1', 'user-1');
   });

@@ -1,0 +1,6 @@
+projectKey=AthletiaBackend
+serverUrl=http://localhost:9000
+serverVersion=26.8.0.126808
+dashboardUrl=http://localhost:9000/dashboard?id=AthletiaBackend
+ceTaskId=800ad5ce-bc6c-4bc4-8a1d-7f5be43e08c6
+ceTaskUrl=http://localhost:9000/api/ce/task?id=800ad5ce-bc6c-4bc4-8a1d-7f5be43e08c6

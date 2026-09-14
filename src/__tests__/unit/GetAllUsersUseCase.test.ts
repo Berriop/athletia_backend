@@ -3,15 +3,12 @@ import { GetAllUsersUseCase } from '../../application/use-cases/admin/GetAllUser
 import { IUserRepository } from '../../domain/repositories/IUserRepository';
 import { User } from '../../domain/entities/User';
 
-// RF-30 (parte 1) — Listar usuarios en el panel de administración. Basado en
-// el diagrama "RF-30 Back Parte 1 (GetAllUsersUseCase)" (Patrón A, V(G)=1,
-// lineal, 1 camino básico).
 function user(overrides: Partial<User> = {}): User {
   return {
     id: 'user-1',
-    email: 'user@test.com',
-    password: 'hashed-secret',
-    name: 'Jane Doe',
+    email: 'user1@example.com',
+    password: 'hashed_pwd',
+    name: 'User One',
     birthDate: null,
     gender: null,
     heightCm: null,
@@ -46,27 +43,33 @@ describe('GetAllUsersUseCase', () => {
     useCase = new GetAllUsersUseCase(userRepository);
   });
 
-  // Camino 1: INICIO,1,2,FIN
-  it('Camino 1: retorna todos los usuarios sin exponer la contraseña', async () => {
+  // Camino único: INICIO,1,2,FIN
+  it('Camino 1: lista los usuarios registrados sin exponer la contraseña de ninguno', async () => {
+    // Arrange
     vi.mocked(userRepository.findAll).mockResolvedValue([
-      user({ id: 'user-1' }),
-      user({ id: 'user-2', role: 'ADMIN' }),
+      user({ id: 'user-1', email: 'a@example.com' }),
+      user({ id: 'user-2', email: 'b@example.com', role: 'ADMIN' }),
     ]);
 
+    // Act
     const result = await useCase.execute();
 
+    // Assert
     expect(result).toHaveLength(2);
     expect(result[0]).not.toHaveProperty('password');
     expect(result[1]).not.toHaveProperty('password');
-    expect(result[0].id).toBe('user-1');
+    expect(result[0].email).toBe('a@example.com');
     expect(result[1].role).toBe('ADMIN');
   });
 
-  it('Camino 1: retorna lista vacía cuando no hay usuarios', async () => {
+  it('sin usuarios registrados → retorna una lista vacía', async () => {
+    // Arrange
     vi.mocked(userRepository.findAll).mockResolvedValue([]);
 
+    // Act
     const result = await useCase.execute();
 
+    // Assert
     expect(result).toEqual([]);
   });
 });

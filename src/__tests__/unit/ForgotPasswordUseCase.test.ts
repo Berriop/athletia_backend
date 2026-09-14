@@ -54,8 +54,10 @@ describe('ForgotPasswordUseCase', () => {
 
   // Camino 1: INICIO,1,2,3,FIN
   it('Camino 1: correo no registrado → no hace nada (no revela si el correo existe)', async () => {
+    // Arrange
     vi.mocked(userRepository.findByEmail).mockResolvedValue(null);
 
+    // Act & Assert
     await expect(useCase.execute('unknown@example.com')).resolves.toBeUndefined();
     expect(userRepository.update).not.toHaveBeenCalled();
     expect(emailService.sendPasswordResetEmail).not.toHaveBeenCalled();
@@ -63,18 +65,23 @@ describe('ForgotPasswordUseCase', () => {
 
   // Camino 2: INICIO,1,2,4,5,FIN
   it('Camino 2: correo registrado pero cuenta bloqueada → ForbiddenError (403)', async () => {
+    // Arrange
     vi.mocked(userRepository.findByEmail).mockResolvedValue(user({ isBlocked: true }));
 
+    // Act & Assert
     await expect(useCase.execute('test@example.com')).rejects.toThrow(ForbiddenError);
     expect(emailService.sendPasswordResetEmail).not.toHaveBeenCalled();
   });
 
   // Camino 3: INICIO,1,2,4,6,7,FIN
   it('Camino 3: correo registrado y cuenta activa → genera token (15 min) y envía el correo', async () => {
+    // Arrange
     vi.mocked(userRepository.findByEmail).mockResolvedValue(user());
 
+    // Act
     await useCase.execute('test@example.com');
 
+    // Assert
     expect(userRepository.update).toHaveBeenCalledWith(
       'user-1',
       expect.objectContaining({ resetPasswordToken: expect.any(String), resetPasswordExpires: expect.any(Date) }),

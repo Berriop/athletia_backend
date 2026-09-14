@@ -23,6 +23,7 @@ describe('CreateWorkoutUseCase', () => {
 
   // Camino único: INICIO,1,2,3,FIN
   it('Camino 1: datos válidos → crea el entrenamiento asociado al usuario autenticado (201)', async () => {
+    // Arrange
     const created: Workout = {
       id: 'workout-1',
       title: 'Pierna',
@@ -39,6 +40,7 @@ describe('CreateWorkoutUseCase', () => {
     };
     vi.mocked(workoutRepository.create).mockResolvedValue(created);
 
+    // Act
     const result = await useCase.execute('user-1', {
       title: 'Pierna',
       bodyPart: 'LEGS',
@@ -49,6 +51,7 @@ describe('CreateWorkoutUseCase', () => {
       date: new Date(),
     });
 
+    // Assert
     expect(workoutRepository.create).toHaveBeenCalledWith(
       expect.objectContaining({ userId: 'user-1', title: 'Pierna', description: null }),
     );
@@ -56,8 +59,10 @@ describe('CreateWorkoutUseCase', () => {
   });
 
   it('cuando no se envía descripción, la guarda como null (no undefined)', async () => {
+    // Arrange
     vi.mocked(workoutRepository.create).mockResolvedValue({} as Workout);
 
+    // Act
     await useCase.execute('user-1', {
       title: 'Pecho',
       bodyPart: 'CHEST',
@@ -68,6 +73,7 @@ describe('CreateWorkoutUseCase', () => {
       date: new Date(),
     });
 
+    // Assert
     const callArg = vi.mocked(workoutRepository.create).mock.calls[0][0];
     expect(callArg.description).toBeNull();
   });
