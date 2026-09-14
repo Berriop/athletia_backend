@@ -3,12 +3,12 @@ import { ValidationError } from '../../domain/errors/AppError';
 import bcrypt from 'bcrypt';
 
 export class ResetPasswordUseCase {
-  constructor(private userRepository: IUserRepository) {}
+  constructor(private readonly userRepository: IUserRepository) {}
 
   async execute(token: string, newPassword: string): Promise<void> {
     const user = await this.userRepository.findByResetToken(token);
-    
-    if (!user || !user.resetPasswordExpires || user.resetPasswordExpires < new Date()) {
+
+    if (!user?.resetPasswordExpires || user.resetPasswordExpires < new Date()) {
       throw new ValidationError('Token inválido o expirado');
     }
 

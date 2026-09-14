@@ -20,11 +20,11 @@ const app: Application = express();
 app.use(helmet());
 
 // 2. Strict CORS configuration
-const allowedOrigins = env.CORS_ORIGIN.split(',').map((origin) => origin.trim());
+const allowedOrigins = new Set(env.CORS_ORIGIN.split(',').map((origin) => origin.trim()));
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
+      if (!origin || allowedOrigins.has(origin)) {
         callback(null, true);
       } else {
         callback(new ForbiddenError('Not allowed by CORS'));

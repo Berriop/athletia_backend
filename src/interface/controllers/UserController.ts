@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { ExportUserDataUseCase } from '../../application/use-cases/ExportUserDataUseCase';
 
 export class UserController {
-  constructor(private exportUserDataUseCase: ExportUserDataUseCase) {}
+  constructor(private readonly exportUserDataUseCase: ExportUserDataUseCase) {}
 
   exportData = async (req: Request, res: Response, next: NextFunction) => {
     try {

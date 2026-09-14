@@ -11,13 +11,13 @@ import { sendCreated, sendSuccess } from '../helpers/response.helper';
 
 export class AuthController {
   constructor(
-    private registerUseCase: RegisterUseCase,
-    private loginUseCase: LoginUseCase,
-    private getMeUseCase: GetMeUseCase,
-    private updateProfileUseCase: UpdateProfileUseCase,
-    private forgotPasswordUseCase: ForgotPasswordUseCase,
-    private resetPasswordUseCase: ResetPasswordUseCase,
-    private verifyEmailUseCase: VerifyEmailUseCase,
+    private readonly registerUseCase: RegisterUseCase,
+    private readonly loginUseCase: LoginUseCase,
+    private readonly getMeUseCase: GetMeUseCase,
+    private readonly updateProfileUseCase: UpdateProfileUseCase,
+    private readonly forgotPasswordUseCase: ForgotPasswordUseCase,
+    private readonly resetPasswordUseCase: ResetPasswordUseCase,
+    private readonly verifyEmailUseCase: VerifyEmailUseCase,
   ) {}
 
   register = async (req: Request, res: Response, next: NextFunction) => {

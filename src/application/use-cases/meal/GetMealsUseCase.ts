@@ -6,7 +6,7 @@ import { resolvePagination, buildPaginatedResult, PaginatedResult } from '../pag
 export type GetMealsResponse = PaginatedResult<Meal>;
 
 export class GetMealsUseCase {
-  constructor(private mealRepository: IMealRepository) {}
+  constructor(private readonly mealRepository: IMealRepository) {}
 
   async execute(userId: string, queryParams: QueryMealDTO): Promise<GetMealsResponse> {
     const { page, limit, skip } = resolvePagination(queryParams);

@@ -4,7 +4,7 @@ import { UpdateSleepDTO } from '../../dto/sleep.dto';
 import { NotFoundError } from '../../../domain/errors/AppError';
 
 export class UpdateSleepUseCase {
-  constructor(private sleepRepository: ISleepRepository) {}
+  constructor(private readonly sleepRepository: ISleepRepository) {}
 
   async execute(sleepId: string, userId: string, data: UpdateSleepDTO): Promise<SleepLog> {
     const existing = await this.sleepRepository.findById(sleepId, userId);

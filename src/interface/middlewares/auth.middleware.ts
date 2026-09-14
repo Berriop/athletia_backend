@@ -13,7 +13,7 @@ declare global {
 export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
 
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+  if (!authHeader?.startsWith('Bearer ')) {
     return res.status(401).json({
       success: false,
       error: {
@@ -29,7 +29,9 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
     const payload = container.jwtService.verifyToken(token);
     req.user = payload;
     next();
-  } catch (error) {
+  } catch {
+    // Cualquier motivo de fallo (token inválido, expirado o corrupto) responde
+    // igual con 401 genérico: no se exponen detalles internos del error de JWT.
     return res.status(401).json({
       success: false,
       error: {

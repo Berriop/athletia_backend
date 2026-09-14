@@ -1,13 +1,13 @@
 import { z } from 'zod';
 
-const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{12,}$/;
+const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{12,}$/;
 const GENDERS = ['MALE', 'FEMALE', 'OTHER'] as const;
 const EXPERIENCE_LEVELS = ['BEGINNER', 'INTERMEDIATE', 'ADVANCED', 'EXPERT'] as const;
 
 export const RegisterSchema = z.object({
   body: z
     .object({
-      email: z.string().email('Invalid email format'),
+      email: z.email('Invalid email format'),
       password: z
         .string()
         .min(12, 'La contraseña debe tener al menos 12 caracteres')
@@ -31,7 +31,7 @@ export const RegisterSchema = z.object({
 
 export const LoginSchema = z.object({
   body: z.object({
-    email: z.string().email('Invalid email format'),
+    email: z.email('Invalid email format'),
     password: z.string().min(1, 'Password is required'),
   }),
 });

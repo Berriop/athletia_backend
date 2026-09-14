@@ -2,7 +2,7 @@ import { IUserRepository } from '../../domain/repositories/IUserRepository';
 import { NotFoundError } from '../../domain/errors/AppError';
 
 export class GetMeUseCase {
-  constructor(private userRepository: IUserRepository) {}
+  constructor(private readonly userRepository: IUserRepository) {}
 
   async execute(userId: string) {
     const user = await this.userRepository.findById(userId);

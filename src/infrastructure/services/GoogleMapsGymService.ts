@@ -56,9 +56,8 @@ export class GoogleMapsGymService implements IGoogleMapsService {
       }
       const data = (await response.json()) as GooglePlacesResponse;
       if (data.status !== 'OK' && data.status !== 'ZERO_RESULTS') {
-        throw new ExternalServiceError(
-          `Google Places API error: ${data.status}${data.error_message ? ` - ${data.error_message}` : ''}`,
-        );
+        const errorSuffix = data.error_message ? ` - ${data.error_message}` : '';
+        throw new ExternalServiceError(`Google Places API error: ${data.status}${errorSuffix}`);
       }
       return data;
     } catch (err: unknown) {

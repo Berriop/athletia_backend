@@ -5,8 +5,8 @@ import { sendSuccess } from '../helpers/response.helper';
 
 export class GymController {
   constructor(
-    private nearbyGymsUseCase: NearbyGymsUseCase,
-    private searchGymsUseCase: SearchGymsUseCase,
+    private readonly nearbyGymsUseCase: NearbyGymsUseCase,
+    private readonly searchGymsUseCase: SearchGymsUseCase,
   ) {}
 
   async nearby(req: Request, res: Response, next: NextFunction): Promise<void> {

@@ -6,7 +6,7 @@ import { resolvePagination, buildPaginatedResult, PaginatedResult } from '../pag
 export type GetWorkoutsResponse = PaginatedResult<Workout>;
 
 export class GetWorkoutsUseCase {
-  constructor(private workoutRepository: IWorkoutRepository) {}
+  constructor(private readonly workoutRepository: IWorkoutRepository) {}
 
   async execute(userId: string, queryParams: QueryWorkoutDTO): Promise<GetWorkoutsResponse> {
     const { page, limit, skip } = resolvePagination(queryParams);

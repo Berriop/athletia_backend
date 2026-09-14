@@ -2,7 +2,7 @@ import { IUserRepository } from '../../domain/repositories/IUserRepository';
 import { prisma } from '../../infrastructure/database/prisma';
 
 export class ExportUserDataUseCase {
-  constructor(private userRepository: IUserRepository) {}
+  constructor(private readonly userRepository: IUserRepository) {}
 
   async execute(userId: string): Promise<string> {
     const [workouts, meals, sleepLogs, injuries] = await Promise.all([

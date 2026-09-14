@@ -3,7 +3,7 @@ import { Meal } from '../../../domain/entities/Meal';
 import { NotFoundError } from '../../../domain/errors/AppError';
 
 export class GetMealByIdUseCase {
-  constructor(private mealRepository: IMealRepository) {}
+  constructor(private readonly mealRepository: IMealRepository) {}
 
   async execute(mealId: string, userId: string): Promise<Meal> {
     const meal = await this.mealRepository.findById(mealId, userId);
