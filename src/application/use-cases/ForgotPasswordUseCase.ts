@@ -1,12 +1,12 @@
 import { IUserRepository } from '../../domain/repositories/IUserRepository';
 import { IEmailService } from '../../infrastructure/services/EmailService';
 import { ForbiddenError } from '../../domain/errors/AppError';
-import crypto from 'crypto';
+import crypto from 'node:crypto';
 
 export class ForgotPasswordUseCase {
   constructor(
-    private userRepository: IUserRepository,
-    private emailService: IEmailService
+    private readonly userRepository: IUserRepository,
+    private readonly emailService: IEmailService
   ) {}
 
   async execute(email: string): Promise<void> {

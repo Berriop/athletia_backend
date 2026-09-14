@@ -4,14 +4,14 @@ import { ValidationError } from '../../domain/errors/AppError';
 
 export class ResetPasswordUseCase {
   constructor(
-    private userRepository: IUserRepository,
-    private hashService: IHashService,
+    private readonly userRepository: IUserRepository,
+    private readonly hashService: IHashService,
   ) {}
 
   async execute(token: string, newPassword: string): Promise<void> {
     const user = await this.userRepository.findByResetToken(token);
 
-    if (!user || !user.resetPasswordExpires || user.resetPasswordExpires < new Date()) {
+    if (!user?.resetPasswordExpires || user.resetPasswordExpires < new Date()) {
       throw new ValidationError('Token inválido o expirado');
     }
 

@@ -2,7 +2,7 @@ import { IUserRepository } from '../../domain/repositories/IUserRepository';
 import { ValidationError } from '../../domain/errors/AppError';
 
 export class VerifyEmailUseCase {
-  constructor(private userRepository: IUserRepository) {}
+  constructor(private readonly userRepository: IUserRepository) {}
 
   async execute(token: string): Promise<void> {
     const user = await this.userRepository.findByEmailVerificationToken(token);

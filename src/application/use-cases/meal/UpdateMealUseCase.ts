@@ -4,7 +4,7 @@ import { UpdateMealDTO } from '../../dto/meal.dto';
 import { NotFoundError } from '../../../domain/errors/AppError';
 
 export class UpdateMealUseCase {
-  constructor(private mealRepository: IMealRepository) {}
+  constructor(private readonly mealRepository: IMealRepository) {}
 
   async execute(mealId: string, userId: string, data: UpdateMealDTO): Promise<Meal> {
     const existing = await this.mealRepository.findById(mealId, userId);

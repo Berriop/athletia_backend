@@ -6,9 +6,9 @@ import { UnauthorizedError, ForbiddenError } from '../../domain/errors/AppError'
 
 export class LoginUseCase {
   constructor(
-    private userRepository: IUserRepository,
-    private hashService: IHashService,
-    private jwtService: IJwtService
+    private readonly userRepository: IUserRepository,
+    private readonly hashService: IHashService,
+    private readonly jwtService: IJwtService
   ) {}
 
   async execute(data: LoginDTO) {

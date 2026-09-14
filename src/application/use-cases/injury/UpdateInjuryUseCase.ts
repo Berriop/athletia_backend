@@ -4,7 +4,7 @@ import { UpdateInjuryDTO } from '../../dto/injury.dto';
 import { NotFoundError } from '../../../domain/errors/AppError';
 
 export class UpdateInjuryUseCase {
-  constructor(private injuryRepository: IInjuryRepository) {}
+  constructor(private readonly injuryRepository: IInjuryRepository) {}
 
   async execute(injuryId: string, userId: string, data: UpdateInjuryDTO): Promise<Injury> {
     const existing = await this.injuryRepository.findById(injuryId, userId);

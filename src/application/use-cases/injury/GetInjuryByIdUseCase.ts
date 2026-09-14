@@ -3,7 +3,7 @@ import { Injury } from '../../../domain/entities/Injury';
 import { NotFoundError } from '../../../domain/errors/AppError';
 
 export class GetInjuryByIdUseCase {
-  constructor(private injuryRepository: IInjuryRepository) {}
+  constructor(private readonly injuryRepository: IInjuryRepository) {}
 
   async execute(injuryId: string, userId: string): Promise<Injury> {
     const injury = await this.injuryRepository.findById(injuryId, userId);

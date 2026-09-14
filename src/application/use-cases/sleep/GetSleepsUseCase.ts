@@ -6,7 +6,7 @@ import { resolvePagination, buildPaginatedResult, PaginatedResult } from '../pag
 export type GetSleepsResponse = PaginatedResult<SleepLog>;
 
 export class GetSleepsUseCase {
-  constructor(private sleepRepository: ISleepRepository) {}
+  constructor(private readonly sleepRepository: ISleepRepository) {}
 
   async execute(userId: string, queryParams: QuerySleepDTO): Promise<GetSleepsResponse> {
     const { page, limit, skip } = resolvePagination(queryParams);

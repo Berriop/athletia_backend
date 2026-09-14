@@ -3,7 +3,7 @@ import { SleepLog } from '../../../domain/entities/SleepLog';
 import { CreateSleepDTO } from '../../dto/sleep.dto';
 
 export class CreateSleepUseCase {
-  constructor(private sleepRepository: ISleepRepository) {}
+  constructor(private readonly sleepRepository: ISleepRepository) {}
 
   async execute(userId: string, data: CreateSleepDTO): Promise<SleepLog> {
     const sleepData = {

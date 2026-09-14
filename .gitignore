@@ -11,6 +11,10 @@ dist/
 # Test coverage reports
 coverage/
 
+# SonarQube local scanner artifacts
+.scannerwork/
+sonar-project.local.properties
+
 # Prisma generated client
 src/generated/prisma/
 

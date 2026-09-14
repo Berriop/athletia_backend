@@ -6,7 +6,7 @@ import { resolvePagination, buildPaginatedResult, PaginatedResult } from '../pag
 export type GetInjuriesResponse = PaginatedResult<Injury>;
 
 export class GetInjuriesUseCase {
-  constructor(private injuryRepository: IInjuryRepository) {}
+  constructor(private readonly injuryRepository: IInjuryRepository) {}
 
   async execute(userId: string, queryParams: QueryInjuryDTO): Promise<GetInjuriesResponse> {
     const { page, limit, skip } = resolvePagination(queryParams);

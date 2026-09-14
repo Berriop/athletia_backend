@@ -3,7 +3,7 @@ import { Gym } from '../../../domain/entities/Gym';
 import { SearchGymsDTO } from '../../dto/gym.dto';
 
 export class SearchGymsUseCase {
-  constructor(private googleMapsService: IGoogleMapsService) {}
+  constructor(private readonly googleMapsService: IGoogleMapsService) {}
 
   async execute(params: SearchGymsDTO): Promise<Gym[]> {
     return this.googleMapsService.searchGyms({

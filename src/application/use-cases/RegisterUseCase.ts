@@ -4,14 +4,14 @@ import { IJwtService } from '../../domain/services/IJwtService';
 import { IEmailService } from '../../infrastructure/services/EmailService';
 import { RegisterDTO } from '../dto/auth.dto';
 import { ConflictError } from '../../domain/errors/AppError';
-import crypto from 'crypto';
+import crypto from 'node:crypto';
 
 export class RegisterUseCase {
   constructor(
-    private userRepository: IUserRepository,
-    private hashService: IHashService,
-    private jwtService: IJwtService,
-    private emailService?: IEmailService,
+    private readonly userRepository: IUserRepository,
+    private readonly hashService: IHashService,
+    private readonly jwtService: IJwtService,
+    private readonly emailService?: IEmailService,
   ) {}
 
   async execute(data: RegisterDTO) {

@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { AppError } from '../../domain/errors/AppError';
-import { ZodError, ZodIssue } from 'zod';
+import { ZodError } from 'zod';
 
 /**
  * Global error handler middleware.
@@ -33,14 +33,14 @@ export const errorHandler = (
   // --- 2. Zod validation errors -------------------------------------------
   if (err instanceof ZodError || (err as { name?: string }).name === 'ZodError') {
     const zodErr = err as ZodError;
-    const issues: ZodIssue[] = zodErr.issues || (zodErr as unknown as { errors: ZodIssue[] }).errors || [];
+    const issues = zodErr.issues ?? [];
     console.error('[ValidationError] Zod validation failed');
     res.status(400).json({
       success: false,
       error: {
         code: 'VALIDATION_ERROR',
         message: 'Validation failed',
-        details: issues.map((e: ZodIssue) => ({
+        details: issues.map((e) => ({
           field: e.path.join('.'),
           message: e.message,
         })),

@@ -3,7 +3,7 @@ import { User } from '../../../domain/entities/User';
 import { NotFoundError, ForbiddenError } from '../../../domain/errors/AppError';
 
 export class ToggleUserBlockUseCase {
-  constructor(private userRepository: IUserRepository) {}
+  constructor(private readonly userRepository: IUserRepository) {}
 
   async execute(userId: string, adminUserId?: string): Promise<Omit<User, 'password'>> {
     if (adminUserId && userId === adminUserId) {

@@ -2,7 +2,7 @@ import { IInjuryRepository } from '../../../domain/repositories/IInjuryRepositor
 import { NotFoundError } from '../../../domain/errors/AppError';
 
 export class DeleteInjuryUseCase {
-  constructor(private injuryRepository: IInjuryRepository) {}
+  constructor(private readonly injuryRepository: IInjuryRepository) {}
 
   async execute(injuryId: string, userId: string): Promise<void> {
     const existing = await this.injuryRepository.findById(injuryId, userId);
