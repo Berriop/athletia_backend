@@ -2,7 +2,7 @@ import { ISleepRepository } from '../../../domain/repositories/ISleepRepository'
 import { NotFoundError } from '../../../domain/errors/AppError';
 
 export class DeleteSleepUseCase {
-  constructor(private sleepRepository: ISleepRepository) {}
+  constructor(private readonly sleepRepository: ISleepRepository) {}
 
   async execute(sleepId: string, userId: string): Promise<void> {
     const existing = await this.sleepRepository.findById(sleepId, userId);

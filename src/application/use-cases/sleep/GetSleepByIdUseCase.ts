@@ -3,7 +3,7 @@ import { SleepLog } from '../../../domain/entities/SleepLog';
 import { NotFoundError } from '../../../domain/errors/AppError';
 
 export class GetSleepByIdUseCase {
-  constructor(private sleepRepository: ISleepRepository) {}
+  constructor(private readonly sleepRepository: ISleepRepository) {}
 
   async execute(sleepId: string, userId: string): Promise<SleepLog> {
     const sleep = await this.sleepRepository.findById(sleepId, userId);

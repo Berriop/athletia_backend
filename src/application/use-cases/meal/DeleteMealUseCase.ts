@@ -2,7 +2,7 @@ import { IMealRepository } from '../../../domain/repositories/IMealRepository';
 import { NotFoundError } from '../../../domain/errors/AppError';
 
 export class DeleteMealUseCase {
-  constructor(private mealRepository: IMealRepository) {}
+  constructor(private readonly mealRepository: IMealRepository) {}
 
   async execute(mealId: string, userId: string): Promise<void> {
     const existing = await this.mealRepository.findById(mealId, userId);

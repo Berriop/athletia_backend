@@ -5,8 +5,8 @@ import { sendSuccess } from '../helpers/response.helper';
 
 export class AdminController {
   constructor(
-    private getAllUsersUseCase: GetAllUsersUseCase,
-    private toggleUserBlockUseCase: ToggleUserBlockUseCase,
+    private readonly getAllUsersUseCase: GetAllUsersUseCase,
+    private readonly toggleUserBlockUseCase: ToggleUserBlockUseCase,
   ) {}
 
   getUsers = async (req: Request, res: Response, next: NextFunction) => {

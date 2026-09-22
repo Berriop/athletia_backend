@@ -11,7 +11,7 @@ export interface UpdateProfileDTO {
 }
 
 export class UpdateProfileUseCase {
-  constructor(private userRepository: IUserRepository) {}
+  constructor(private readonly userRepository: IUserRepository) {}
 
   async execute(userId: string, data: UpdateProfileDTO) {
     const user = await this.userRepository.findById(userId);
