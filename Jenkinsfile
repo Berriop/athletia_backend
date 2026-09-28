@@ -120,7 +120,7 @@ pipeline {
         sh '''
           set -e
           for attempt in $(seq 1 20); do
-            STATUS=$(curl -s -o /tmp/athletia-health.json -w '%{http_code}' http://localhost:3000/health || true)
+            STATUS=$(curl -s -o /tmp/athletia-health.json -w '%{http_code}' http://host.docker.internal:3000/health || true)
             echo "HTTP status: $STATUS"
 
             if [ "$STATUS" = "200" ]; then
