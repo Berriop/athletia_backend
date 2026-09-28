@@ -20,6 +20,6 @@ export default defineConfig({
         'src/domain/**',
       ],
     },
-    include: ['src/__tests__/**/*.test.ts'],
+    include: ['src/__tests__/**/*.test.ts', 'test/**/*.test.ts'],
   },
 });
