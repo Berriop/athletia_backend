@@ -162,6 +162,7 @@ pipeline {
 
     success {
       echo 'Backend pipeline finished successfully.'
+      build job: 'athletia-frontend', wait: false
     }
   }
 }
