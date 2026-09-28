@@ -74,12 +74,6 @@ pipeline {
               "${scannerHome}/bin/sonar-scanner" \
                 -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
                 -Dsonar.projectName=${SONAR_PROJECT_NAME} \
-                -Dsonar.sources=src \
-                -Dsonar.tests=src/__tests__ \
-                -Dsonar.exclusions=node_modules/**,dist/**,coverage/**,src/__tests__/**,**/*.test.ts,**/*.spec.ts \
-                -Dsonar.coverage.exclusions=src/__tests__/**,**/*.test.ts,**/*.spec.ts \
-                -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
-                -Dsonar.sourceEncoding=UTF-8
             """
           }
         }
