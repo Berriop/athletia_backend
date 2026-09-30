@@ -110,7 +110,7 @@ pipeline {
             docker run -d \
               --name "$CONTAINER_NAME" \
               --restart unless-stopped \
-              -p 3000:3000 \
+              -p 4000:3000 \
               -e DATABASE_URL="$PROD_DATABASE_URL" \
               "$IMAGE_NAME:$BUILD_NUMBER"
           '''
@@ -123,7 +123,7 @@ pipeline {
         sh '''
           set -e
           for attempt in $(seq 1 20); do
-            STATUS=$(curl -s -o /tmp/athletia-health.json -w '%{http_code}' http://host.docker.internal:3000/health || true)
+            STATUS=$(curl -s -o /tmp/athletia-health.json -w '%{http_code}' http://host.docker.internal:4000/health || true)
             echo "HTTP status: $STATUS"
 
             if [ "$STATUS" = "200" ]; then
