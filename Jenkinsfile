@@ -112,6 +112,7 @@ pipeline {
               --restart unless-stopped \
               -p 4000:3000 \
               -e DATABASE_URL="$PROD_DATABASE_URL" \
+              -e CORS_ORIGIN="http://localhost:8081,http://localhost:5173" \
               "$IMAGE_NAME:$BUILD_NUMBER"
           '''
         }
