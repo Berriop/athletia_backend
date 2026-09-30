@@ -103,15 +103,18 @@ pipeline {
 
     stage('Deploy Application') {
       steps {
-        sh '''
-          set -e
-          docker rm -f "$CONTAINER_NAME" 2>/dev/null || true
-          docker run -d \
-            --name "$CONTAINER_NAME" \
-            --restart unless-stopped \
-            -p 3000:3000 \
-            "$IMAGE_NAME:$BUILD_NUMBER"
-        '''
+        withCredentials([string(credentialsId: 'SUPABASE_DATABASE_URL', variable: 'PROD_DATABASE_URL')]) {
+          sh '''
+            set -e
+            docker rm -f "$CONTAINER_NAME" 2>/dev/null || true
+            docker run -d \
+              --name "$CONTAINER_NAME" \
+              --restart unless-stopped \
+              -p 3000:3000 \
+              -e DATABASE_URL="$PROD_DATABASE_URL" \
+              "$IMAGE_NAME:$BUILD_NUMBER"
+          '''
+        }
       }
     }
 
