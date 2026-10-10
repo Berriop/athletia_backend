@@ -18,4 +18,6 @@ export const env = {
   JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || '24h',
   GOOGLE_MAPS_API_KEY: googleMapsApiKey,
   CORS_ORIGIN: process.env.CORS_ORIGIN || 'http://localhost:5173',
+  // Solo para pruebas E2E y de carga: desactiva los límites de peticiones. Nunca en producción.
+  RATE_LIMIT_DISABLED: process.env.RATE_LIMIT_DISABLED === 'true',
 };

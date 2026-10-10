@@ -41,6 +41,7 @@ app.use(express.json());
 
 // 4. Rate Limiters
 const globalLimiter = rateLimit({
+  skip: () => env.RATE_LIMIT_DISABLED,
   windowMs: 15 * 60 * 1000,
   max: 100,
   standardHeaders: true,
@@ -55,6 +56,7 @@ const globalLimiter = rateLimit({
 });
 
 const loginLimiter = rateLimit({
+  skip: () => env.RATE_LIMIT_DISABLED,
   windowMs: 15 * 60 * 1000,
   max: 5,
   standardHeaders: true,
@@ -69,6 +71,7 @@ const loginLimiter = rateLimit({
 });
 
 const registerLimiter = rateLimit({
+  skip: () => env.RATE_LIMIT_DISABLED,
   windowMs: 60 * 60 * 1000,
   max: 3,
   standardHeaders: true,
@@ -83,6 +86,7 @@ const registerLimiter = rateLimit({
 });
 
 const forgotPasswordLimiter = rateLimit({
+  skip: () => env.RATE_LIMIT_DISABLED,
   windowMs: 60 * 60 * 1000,
   max: 5,
   standardHeaders: true,
