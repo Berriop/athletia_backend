@@ -10,12 +10,7 @@ import { SleepLog } from '../../domain/entities/SleepLog';
 import { Injury } from '../../domain/entities/Injury';
 import { IGoogleMapsService } from '../../domain/services/IGoogleMapsService';
 
-/**
- * Suite de REGRESIÓN para las funcionalidades de backend de Juan Pablo
- * Berrío: RF-12, RF-13, RF-14, RF-15, RF-16, RF-18.
- * Ver backend.regression.luisa.test.ts para cómo demostrar en vivo que esta
- * suite detecta una regresión.
- */
+
 
 function genericRepo<T>() {
   return { create: vi.fn(), findById: vi.fn(), findAll: vi.fn(), update: vi.fn(), delete: vi.fn(), count: vi.fn() } as any as T & Record<string, ReturnType<typeof vi.fn>>;
@@ -32,6 +27,7 @@ describe('[Regresión] RF-12/13 — Sleep: seguir exigiendo un registro existent
   it('modificar un registro inexistente sigue lanzando NotFoundError', async () => {
     const repo = genericRepo<any>();
     vi.mocked(repo.findById).mockResolvedValue(null);
+    vi.mocked(repo.update).mockResolvedValue(sleepLog());
     await expect(new UpdateSleepUseCase(repo).execute('x', 'user-1', {})).rejects.toThrow(NotFoundError);
   });
 
