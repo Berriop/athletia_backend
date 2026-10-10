@@ -40,34 +40,6 @@ app.use(
 app.use(express.json());
 
 // 4. Rate Limiters
-const globalLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: {
-    success: false,
-    error: {
-      code: 'TOO_MANY_REQUESTS',
-      message: 'Too many requests from this IP, please try again after 15 minutes',
-    },
-  },
-});
-
-const loginLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 5,
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: {
-    success: false,
-    error: {
-      code: 'TOO_MANY_REQUESTS',
-      message: 'Too many login attempts. Please try again after 15 minutes',
-    },
-  },
-});
-
 const registerLimiter = rateLimit({
   windowMs: 60 * 60 * 1000,
   max: 3,
@@ -96,8 +68,6 @@ const forgotPasswordLimiter = rateLimit({
   },
 });
 
-app.use('/api/', globalLimiter);
-app.use('/api/v1/auth/login', loginLimiter);
 app.use('/api/v1/auth/register', registerLimiter);
 app.use('/api/v1/auth/forgot-password', forgotPasswordLimiter);
 
