@@ -6,9 +6,9 @@ export class DeleteWorkoutUseCase {
 
   async execute(workoutId: string, userId: string): Promise<void> {
     const existing = await this.workoutRepository.findById(workoutId, userId);
-    if (!existing) throw new NotFoundError('Workout not found');
+    if (!existing) throw new NotFoundError('Entrenamiento no encontrado');
 
     const deleted = await this.workoutRepository.delete(workoutId, userId);
-    if (!deleted) throw new NotFoundError('Workout not found');
+    if (!deleted) throw new NotFoundError('Entrenamiento no encontrado');
   }
 }

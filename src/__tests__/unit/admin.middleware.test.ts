@@ -28,7 +28,7 @@ describe('adminMiddleware', () => {
     adminMiddleware(req, res, next);
 
     expect(res.status).toHaveBeenCalledWith(401);
-    expect(res.json).toHaveBeenCalledWith({ success: false, message: 'No token provided' });
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: 'No se envió el token de acceso' });
     expect(next).not.toHaveBeenCalled();
   });
 
@@ -39,7 +39,7 @@ describe('adminMiddleware', () => {
     adminMiddleware(req, res, next);
 
     expect(res.status).toHaveBeenCalledWith(403);
-    expect(res.json).toHaveBeenCalledWith({ success: false, message: 'Forbidden: admin access required' });
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: 'Acceso denegado: se requieren permisos de administrador' });
     expect(next).not.toHaveBeenCalled();
   });
 

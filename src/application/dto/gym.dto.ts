@@ -10,7 +10,7 @@ export const NearbyGymsSchema = z.object({
 
 export const SearchGymsSchema = z.object({
   query: z.object({
-    q: z.string().min(1, 'Search query is required'),
+    q: z.string().min(1, 'El texto de búsqueda es obligatorio'),
     lat: z.coerce.number().optional(),
     lng: z.coerce.number().optional(),
   }),

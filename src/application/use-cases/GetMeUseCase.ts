@@ -7,7 +7,7 @@ export class GetMeUseCase {
   async execute(userId: string) {
     const user = await this.userRepository.findById(userId);
     if (!user) {
-      throw new NotFoundError('User not found');
+      throw new NotFoundError('Usuario no encontrado');
     }
 
     const { password: _, ...userWithoutPassword } = user;

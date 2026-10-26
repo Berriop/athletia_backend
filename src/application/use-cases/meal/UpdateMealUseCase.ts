@@ -8,10 +8,10 @@ export class UpdateMealUseCase {
 
   async execute(mealId: string, userId: string, data: UpdateMealDTO): Promise<Meal> {
     const existing = await this.mealRepository.findById(mealId, userId);
-    if (!existing) throw new NotFoundError('Meal not found');
+    if (!existing) throw new NotFoundError('Comida no encontrada');
 
     const updated = await this.mealRepository.update(mealId, userId, data);
-    if (!updated) throw new NotFoundError('Meal not found');
+    if (!updated) throw new NotFoundError('Comida no encontrada');
     return updated;
   }
 }

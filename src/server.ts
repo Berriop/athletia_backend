@@ -27,7 +27,7 @@ app.use(
       if (!origin || allowedOrigins.has(origin)) {
         callback(null, true);
       } else {
-        callback(new ForbiddenError('Not allowed by CORS'));
+        callback(new ForbiddenError('Origen no permitido por CORS'));
       }
     },
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
@@ -50,7 +50,7 @@ const registerLimiter = rateLimit({
     success: false,
     error: {
       code: 'TOO_MANY_REQUESTS',
-      message: 'Too many accounts created from this IP. Please try again after an hour',
+      message: 'Se crearon demasiadas cuentas desde esta IP. Inténtalo de nuevo en una hora',
     },
   },
 });
@@ -65,7 +65,7 @@ const forgotPasswordLimiter = rateLimit({
     success: false,
     error: {
       code: 'TOO_MANY_REQUESTS',
-      message: 'Too many password reset requests from this IP. Please try again after an hour',
+      message: 'Demasiadas solicitudes de recuperación de contraseña desde esta IP. Inténtalo de nuevo en una hora',
     },
   },
 });

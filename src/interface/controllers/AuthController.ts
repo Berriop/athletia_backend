@@ -8,6 +8,7 @@ import { ResetPasswordUseCase } from '../../application/use-cases/ResetPasswordU
 import { VerifyEmailUseCase } from '../../application/use-cases/VerifyEmailUseCase';
 import { RegisterDTO, LoginDTO } from '../../application/dto/auth.dto';
 import { sendCreated, sendSuccess } from '../helpers/response.helper';
+import { ValidationError } from '../../domain/errors/AppError';
 
 export class AuthController {
   constructor(
@@ -63,7 +64,7 @@ export class AuthController {
   forgotPassword = async (req: Request, res: Response, next: NextFunction) => {
     try {
       await this.forgotPasswordUseCase.execute(req.body.email);
-      sendSuccess(res, { message: 'If email exists, a reset link has been sent.' });
+      sendSuccess(res, { message: 'Si el correo está registrado, te enviamos un enlace para restablecer la contraseña.' });
     } catch (error) {
       next(error);
     }
@@ -73,7 +74,7 @@ export class AuthController {
     try {
       const { token, newPassword } = req.body;
       await this.resetPasswordUseCase.execute(token, newPassword);
-      sendSuccess(res, { message: 'Password has been reset successfully.' });
+      sendSuccess(res, { message: 'La contraseña se restableció correctamente.' });
     } catch (error) {
       next(error);
     }
@@ -82,9 +83,9 @@ export class AuthController {
   verifyEmail = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { token } = req.query;
-      if (!token || typeof token !== 'string') throw new Error('Token is required');
+      if (!token || typeof token !== 'string') throw new ValidationError('El token es obligatorio');
       await this.verifyEmailUseCase.execute(token);
-      sendSuccess(res, { message: 'Email verified successfully.' });
+      sendSuccess(res, { message: 'Correo verificado correctamente.' });
     } catch (error) {
       next(error);
     }

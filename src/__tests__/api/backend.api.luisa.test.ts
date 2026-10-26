@@ -102,7 +102,7 @@ describe('[API] RF-02 — POST /api/v1/auth/login', () => {
 
     expect(response.status).toBe(401);
     expect(response.body.error.code).toBe('UNAUTHORIZED');
-    expect(response.body.error.message).toBe('Invalid credentials');
+    expect(response.body.error.message).toBe('Correo o contraseña incorrectos');
   });
 
   it('403: una cuenta bloqueada no puede iniciar sesión', async () => {

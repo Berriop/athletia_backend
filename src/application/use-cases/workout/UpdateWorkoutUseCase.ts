@@ -8,10 +8,10 @@ export class UpdateWorkoutUseCase {
 
   async execute(workoutId: string, userId: string, data: UpdateWorkoutDTO): Promise<Workout> {
     const existing = await this.workoutRepository.findById(workoutId, userId);
-    if (!existing) throw new NotFoundError('Workout not found');
+    if (!existing) throw new NotFoundError('Entrenamiento no encontrado');
 
     const updated = await this.workoutRepository.update(workoutId, userId, data);
-    if (!updated) throw new NotFoundError('Workout not found');
+    if (!updated) throw new NotFoundError('Entrenamiento no encontrado');
     return updated;
   }
 }

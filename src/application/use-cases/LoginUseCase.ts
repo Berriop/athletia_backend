@@ -14,7 +14,7 @@ export class LoginUseCase {
   async execute(data: LoginDTO) {
     const user = await this.userRepository.findByEmail(data.email);
     if (!user) {
-      throw new UnauthorizedError('Invalid credentials');
+      throw new UnauthorizedError('Correo o contraseña incorrectos');
     }
 
     if (user.isBlocked) {
@@ -22,12 +22,12 @@ export class LoginUseCase {
     }
 
     if (!user.password) {
-       throw new UnauthorizedError('Invalid credentials');
+       throw new UnauthorizedError('Correo o contraseña incorrectos');
     }
 
     const isMatch = await this.hashService.compare(data.password, user.password);
     if (!isMatch) {
-      throw new UnauthorizedError('Invalid credentials');
+      throw new UnauthorizedError('Correo o contraseña incorrectos');
     }
 
     const token = this.jwtService.generateToken({

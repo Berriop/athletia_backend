@@ -123,7 +123,7 @@ describe('[API] RF-27 — recuperar contraseña', () => {
     const response = await request(app).post('/api/v1/auth/forgot-password').send({ email: 'user@example.com' });
 
     expect(response.status).toBe(200);
-    expect(response.body.data.message).toBe('If email exists, a reset link has been sent.');
+    expect(response.body.data.message).toBe('Si el correo está registrado, te enviamos un enlace para restablecer la contraseña.');
   });
 
   it('forgot-password 400: el correo debe tener formato válido', async () => {
@@ -145,7 +145,7 @@ describe('[API] RF-27 — recuperar contraseña', () => {
       .send({ token: 'token-valido', newPassword: STRONG_PASSWORD });
 
     expect(response.status).toBe(200);
-    expect(response.body.data.message).toBe('Password has been reset successfully.');
+    expect(response.body.data.message).toBe('La contraseña se restableció correctamente.');
   });
 
   it('reset-password 400: un token desconocido o vencido es rechazado', async () => {

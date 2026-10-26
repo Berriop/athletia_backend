@@ -82,7 +82,7 @@ describe('RF-01 — RegisterUseCase (Fluent Assertions)', () => {
       throw new Error('no debía llegar aquí');
     } catch (err) {
       chaiExpect(err).to.be.instanceOf(ConflictError);
-      chaiExpect((err as Error).message).to.equal('Email already in use');
+      chaiExpect((err as Error).message).to.equal('Ya existe una cuenta con este correo');
     }
   });
 
@@ -125,7 +125,7 @@ describe('RF-02 — LoginUseCase (Fluent Assertions)', () => {
       throw new Error('no debía llegar aquí');
     } catch (err) {
       chaiExpect(err).to.be.instanceOf(UnauthorizedError);
-      chaiExpect((err as Error).message).to.match(/invalid credentials/i);
+      chaiExpect((err as Error).message).to.match(/correo o contraseña incorrectos/i);
     }
   });
 

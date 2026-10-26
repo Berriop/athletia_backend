@@ -7,7 +7,7 @@ export class GetInjuryByIdUseCase {
 
   async execute(injuryId: string, userId: string): Promise<Injury> {
     const injury = await this.injuryRepository.findById(injuryId, userId);
-    if (!injury) throw new NotFoundError('Injury not found');
+    if (!injury) throw new NotFoundError('Lesión no encontrada');
     return injury;
   }
 }

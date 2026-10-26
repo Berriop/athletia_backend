@@ -18,7 +18,7 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
       success: false,
       error: {
         code: 'UNAUTHORIZED',
-        message: 'No token provided or invalid format',
+        message: 'No se envió el token de acceso o su formato es inválido',
       },
     });
   }
@@ -36,7 +36,7 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
       success: false,
       error: {
         code: 'UNAUTHORIZED',
-        message: 'Invalid or expired token',
+        message: 'Token inválido o expirado',
       },
     });
   }

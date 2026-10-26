@@ -7,7 +7,7 @@ export class GetMealByIdUseCase {
 
   async execute(mealId: string, userId: string): Promise<Meal> {
     const meal = await this.mealRepository.findById(mealId, userId);
-    if (!meal) throw new NotFoundError('Meal not found');
+    if (!meal) throw new NotFoundError('Comida no encontrada');
     return meal;
   }
 }

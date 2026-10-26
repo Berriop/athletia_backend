@@ -6,9 +6,9 @@ export class DeleteSleepUseCase {
 
   async execute(sleepId: string, userId: string): Promise<void> {
     const existing = await this.sleepRepository.findById(sleepId, userId);
-    if (!existing) throw new NotFoundError('Sleep log not found');
+    if (!existing) throw new NotFoundError('Registro de sueño no encontrado');
 
     const deleted = await this.sleepRepository.delete(sleepId, userId);
-    if (!deleted) throw new NotFoundError('Sleep log not found');
+    if (!deleted) throw new NotFoundError('Registro de sueño no encontrado');
   }
 }

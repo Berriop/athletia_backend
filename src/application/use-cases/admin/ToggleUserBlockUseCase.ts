@@ -11,7 +11,7 @@ export class ToggleUserBlockUseCase {
     }
 
     const user = await this.userRepository.findById(userId);
-    if (!user) throw new NotFoundError('User not found');
+    if (!user) throw new NotFoundError('Usuario no encontrado');
 
     const updated = await this.userRepository.update(user.id, {
       isBlocked: !user.isBlocked,

@@ -16,7 +16,7 @@ export class UpdateProfileUseCase {
   async execute(userId: string, data: UpdateProfileDTO) {
     const user = await this.userRepository.findById(userId);
     if (!user) {
-      throw new NotFoundError('User not found');
+      throw new NotFoundError('Usuario no encontrado');
     }
 
     // Build the update payload, converting birthDate string to Date

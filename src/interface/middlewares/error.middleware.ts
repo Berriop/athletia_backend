@@ -39,7 +39,7 @@ export const errorHandler = (
       success: false,
       error: {
         code: 'VALIDATION_ERROR',
-        message: 'Validation failed',
+        message: 'Datos inválidos',
         details: issues.map((e) => ({
           field: e.path.join('.'),
           message: e.message,
@@ -55,7 +55,7 @@ export const errorHandler = (
     success: false,
     error: {
       code: 'INTERNAL_SERVER_ERROR',
-      message: 'An unexpected error occurred',
+      message: 'Ocurrió un error inesperado',
     },
   });
 };

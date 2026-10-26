@@ -8,10 +8,10 @@ export class UpdateSleepUseCase {
 
   async execute(sleepId: string, userId: string, data: UpdateSleepDTO): Promise<SleepLog> {
     const existing = await this.sleepRepository.findById(sleepId, userId);
-    if (!existing) throw new NotFoundError('Sleep log not found');
+    if (!existing) throw new NotFoundError('Registro de sueño no encontrado');
 
     const updated = await this.sleepRepository.update(sleepId, userId, data);
-    if (!updated) throw new NotFoundError('Sleep log not found');
+    if (!updated) throw new NotFoundError('Registro de sueño no encontrado');
     return updated;
   }
 }

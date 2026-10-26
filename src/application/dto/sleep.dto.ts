@@ -1,27 +1,30 @@
 import { z } from 'zod';
+import { AT_LEAST_ONE_FIELD, notes, numberInRange, pastOrTodayDate, positiveNumber } from './common';
+
+const sleepFields = {
+  hoursSlept: positiveNumber('horas de sueño', 24),
+  sleepQuality: numberInRange('calidad del sueño', 1, 10, { integer: true }),
+  hadNightmares: z.boolean().optional().default(false),
+  stressLevel: numberInRange('nivel de estrés', 1, 10, { integer: true }),
+  notes,
+  date: pastOrTodayDate(),
+};
 
 export const CreateSleepSchema = z.object({
-  body: z.object({
-    hoursSlept: z.number().positive('Hours slept must be positive'),
-    sleepQuality: z.number().int().min(1).max(10, 'Sleep quality must be between 1 and 10'),
-    hadNightmares: z.boolean().optional().default(false),
-    stressLevel: z.number().int().min(1).max(10, 'Stress level must be between 1 and 10'),
-    notes: z.string().max(1000).optional().nullable(),
-    date: z.coerce.date(),
-  }),
+  body: z.object(sleepFields),
 });
 
 export const UpdateSleepSchema = z.object({
   body: z
     .object({
-      hoursSlept: z.number().positive().optional(),
-      sleepQuality: z.number().int().min(1).max(10).optional(),
+      hoursSlept: sleepFields.hoursSlept.optional(),
+      sleepQuality: sleepFields.sleepQuality.optional(),
       hadNightmares: z.boolean().optional(),
-      stressLevel: z.number().int().min(1).max(10).optional(),
-      notes: z.string().max(1000).optional().nullable(),
-      date: z.coerce.date().optional(),
+      stressLevel: sleepFields.stressLevel.optional(),
+      notes,
+      date: sleepFields.date.optional(),
     })
-    .refine((obj) => Object.keys(obj).length > 0, 'At least one field is required'),
+    .refine((obj) => Object.keys(obj).length > 0, AT_LEAST_ONE_FIELD),
 });
 
 export const QuerySleepSchema = z.object({

@@ -6,9 +6,9 @@ export class DeleteMealUseCase {
 
   async execute(mealId: string, userId: string): Promise<void> {
     const existing = await this.mealRepository.findById(mealId, userId);
-    if (!existing) throw new NotFoundError('Meal not found');
+    if (!existing) throw new NotFoundError('Comida no encontrada');
 
     const deleted = await this.mealRepository.delete(mealId, userId);
-    if (!deleted) throw new NotFoundError('Meal not found');
+    if (!deleted) throw new NotFoundError('Comida no encontrada');
   }
 }

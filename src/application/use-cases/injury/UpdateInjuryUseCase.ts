@@ -8,10 +8,10 @@ export class UpdateInjuryUseCase {
 
   async execute(injuryId: string, userId: string, data: UpdateInjuryDTO): Promise<Injury> {
     const existing = await this.injuryRepository.findById(injuryId, userId);
-    if (!existing) throw new NotFoundError('Injury not found');
+    if (!existing) throw new NotFoundError('Lesión no encontrada');
 
     const updated = await this.injuryRepository.update(injuryId, userId, data);
-    if (!updated) throw new NotFoundError('Injury not found');
+    if (!updated) throw new NotFoundError('Lesión no encontrada');
     return updated;
   }
 }

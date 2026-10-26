@@ -7,7 +7,7 @@ export class GetSleepByIdUseCase {
 
   async execute(sleepId: string, userId: string): Promise<SleepLog> {
     const sleep = await this.sleepRepository.findById(sleepId, userId);
-    if (!sleep) throw new NotFoundError('Sleep log not found');
+    if (!sleep) throw new NotFoundError('Registro de sueño no encontrado');
     return sleep;
   }
 }

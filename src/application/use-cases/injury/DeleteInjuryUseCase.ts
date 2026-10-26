@@ -6,9 +6,9 @@ export class DeleteInjuryUseCase {
 
   async execute(injuryId: string, userId: string): Promise<void> {
     const existing = await this.injuryRepository.findById(injuryId, userId);
-    if (!existing) throw new NotFoundError('Injury not found');
+    if (!existing) throw new NotFoundError('Lesión no encontrada');
 
     const deleted = await this.injuryRepository.delete(injuryId, userId);
-    if (!deleted) throw new NotFoundError('Injury not found');
+    if (!deleted) throw new NotFoundError('Lesión no encontrada');
   }
 }

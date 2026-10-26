@@ -108,7 +108,7 @@ describe('RF-15 — UpdateInjuryUseCase (Fluent Assertions)', () => {
       await useCase.execute('injury-x', 'user-1', {});
       throw new Error('no debía llegar aquí');
     } catch (err) {
-      chaiExpect(err).to.be.instanceOf(NotFoundError).and.to.have.property('message', 'Injury not found');
+      chaiExpect(err).to.be.instanceOf(NotFoundError).and.to.have.property('message', 'Lesión no encontrada');
     }
   });
 });

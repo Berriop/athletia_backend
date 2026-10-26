@@ -52,12 +52,12 @@ export class GoogleMapsGymService implements IGoogleMapsService {
     try {
       const response = await fetch(url);
       if (!response.ok) {
-        throw new ExternalServiceError(`Google Maps API error: ${response.statusText}`);
+        throw new ExternalServiceError(`Error de la API de Google Maps: ${response.statusText}`);
       }
       const data = (await response.json()) as GooglePlacesResponse;
       if (data.status !== 'OK' && data.status !== 'ZERO_RESULTS') {
         const errorSuffix = data.error_message ? ` - ${data.error_message}` : '';
-        throw new ExternalServiceError(`Google Places API error: ${data.status}${errorSuffix}`);
+        throw new ExternalServiceError(`Error de la API de Google Places: ${data.status}${errorSuffix}`);
       }
       return data;
     } catch (err: unknown) {

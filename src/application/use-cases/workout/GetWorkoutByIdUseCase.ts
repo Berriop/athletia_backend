@@ -7,7 +7,7 @@ export class GetWorkoutByIdUseCase {
 
   async execute(workoutId: string, userId: string): Promise<Workout> {
     const workout = await this.workoutRepository.findById(workoutId, userId);
-    if (!workout) throw new NotFoundError('Workout not found');
+    if (!workout) throw new NotFoundError('Entrenamiento no encontrado');
     return workout;
   }
 }

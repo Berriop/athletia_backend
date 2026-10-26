@@ -1,33 +1,36 @@
 import { z } from 'zod';
+import { AT_LEAST_ONE_FIELD, numberInRange, pastOrTodayDate, requiredText } from './common';
 
 const MEAL_TYPES = ['BREAKFAST', 'LUNCH', 'DINNER', 'SNACK'] as const;
 
-export const CreateMealSchema = z.object({
-  body: z.object({
-    name: z.string().min(1, 'Name is required').max(255),
-    calories: z.number().int().nonnegative('Calories must be a non-negative integer'),
-    mealType: z.enum(MEAL_TYPES, {
-      message: 'mealType must be BREAKFAST, LUNCH, DINNER or SNACK',
-    }),
-    proteinG: z.number().nonnegative('Protein must be non-negative'),
-    carbsG: z.number().nonnegative('Carbs must be non-negative'),
-    fatG: z.number().nonnegative('Fat must be non-negative'),
-    date: z.coerce.date(),
+const mealFields = {
+  name: requiredText('nombre de la comida', 255),
+  calories: numberInRange('calorías', 0, 10000, { integer: true }),
+  mealType: z.enum(MEAL_TYPES, {
+    message: 'El tipo de comida debe ser desayuno, almuerzo, cena o snack',
   }),
+  proteinG: numberInRange('proteína', 0, 1000),
+  carbsG: numberInRange('carbohidratos', 0, 1000),
+  fatG: numberInRange('grasa', 0, 1000),
+  date: pastOrTodayDate(),
+};
+
+export const CreateMealSchema = z.object({
+  body: z.object(mealFields),
 });
 
 export const UpdateMealSchema = z.object({
   body: z
     .object({
-      name: z.string().min(1).max(255).optional(),
-      calories: z.number().int().nonnegative().optional(),
-      mealType: z.enum(MEAL_TYPES).optional(),
-      proteinG: z.number().nonnegative().optional(),
-      carbsG: z.number().nonnegative().optional(),
-      fatG: z.number().nonnegative().optional(),
-      date: z.coerce.date().optional(),
+      name: mealFields.name.optional(),
+      calories: mealFields.calories.optional(),
+      mealType: mealFields.mealType.optional(),
+      proteinG: mealFields.proteinG.optional(),
+      carbsG: mealFields.carbsG.optional(),
+      fatG: mealFields.fatG.optional(),
+      date: mealFields.date.optional(),
     })
-    .refine((obj) => Object.keys(obj).length > 0, 'At least one field is required'),
+    .refine((obj) => Object.keys(obj).length > 0, AT_LEAST_ONE_FIELD),
 });
 
 export const QueryMealSchema = z.object({
