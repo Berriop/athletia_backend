@@ -1,0 +1,32 @@
+[
+  {
+    "id": "TC001",
+    "title": "update_sleep_log_with_invalid_values",
+    "description": "Test updating a sleep log with invalid values such as sleepQuality greater than 10 or hoursSlept greater than 24 to verify the API returns a 400 validation error."
+  },
+  {
+    "id": "TC002",
+    "title": "delete_sleep_log_and_verify_removal",
+    "description": "Test deleting a sleep log by id and then attempting to retrieve it to confirm it returns 404 not found, ensuring proper deletion and ownership enforcement."
+  },
+  {
+    "id": "TC003",
+    "title": "update_injury_with_invalid_severity",
+    "description": "Test updating an injury record with a severity value outside the allowed range (1-10) to verify the API returns a 400 validation error."
+  },
+  {
+    "id": "TC004",
+    "title": "delete_injury_and_verify_removal",
+    "description": "Test deleting an injury record by id and then attempting to retrieve it to confirm it returns 404 not found, ensuring proper deletion and ownership enforcement."
+  },
+  {
+    "id": "TC005",
+    "title": "search_gyms_with_missing_query_parameter",
+    "description": "Test the gym search endpoint without the required query parameter 'q' to verify the API returns a 400 validation error."
+  },
+  {
+    "id": "TC006",
+    "title": "nearby_gyms_with_invalid_radius",
+    "description": "Test the nearby gyms endpoint with a radius parameter exceeding the maximum allowed value (greater than 50000) to verify the API returns a 400 validation error."
+  }
+]
